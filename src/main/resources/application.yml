@@ -1,0 +1,50 @@
+no.nav:
+  security:
+    cors:
+      allowed-origins: # Settes i nais/<cluster>.json
+    jwt:
+      issuer:
+        tokenx:
+          discoveryUrl: ${TOKEN_X_WELL_KNOWN_URL}
+          accepted_audience: ${TOKEN_X_CLIENT_ID}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+
+spring:
+  application:
+    name: # Settes i nais/<cluster>.json
+
+  flyway:
+    baselineOnMigrate: true
+    enabled: true
+    clean-on-validation-error: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+  datasource:
+    hikari:
+      connection-test-query: SELECT 1
+      maximum-pool-size: 2
+      connection-timeout: 1000
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+springdoc:
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:false}
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:false}
+    disable-swagger-default-url: true
+    path: swagger-ui.html
+
+krypto:
+  passphrase: ${KRYPTO_PASSPHRASE}

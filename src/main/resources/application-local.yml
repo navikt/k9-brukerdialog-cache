@@ -1,0 +1,32 @@
+no.nav:
+  security:
+    jwt:
+      issuer:
+        tokenx:
+          discoveryurl: http://localhost:${mock-oauth2-server.port}/tokenx/.well-known/openid-configuration
+          accepted_audience: aud-localhost
+
+  metrics:
+    interval: 36000
+
+spring:
+  mvc:
+    log-request-details: true
+
+  main:
+    web-application-type: none
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+logging:
+  level:
+    root: INFO
+    state:
+      change:
+        logger: ERROR
+
+krypto:
+  passphrase: hemmelig+passord

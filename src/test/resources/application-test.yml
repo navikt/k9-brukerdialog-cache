@@ -1,0 +1,33 @@
+no.nav:
+  security:
+    jwt:
+      issuer:
+        tokenx:
+          discoveryurl: http://localhost:${mock-oauth2-server.port}/tokenx/.well-known/openid-configuration
+          accepted_audience: aud-localhost
+
+    cors:
+      allowed-origins: http://localhost:8080
+
+  metrics:
+    interval: 36000
+
+spring:
+  mvc:
+    log-request-details: true
+  datasource:
+    url: jdbc:tc:postgresql:12:///
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQL12Dialect
+
+logging:
+  level:
+    root: INFO
+    state:
+      change:
+        logger: ERROR
+
+krypto:
+  passphrase: hemmelig+passord

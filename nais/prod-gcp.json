@@ -1,0 +1,34 @@
+{
+  "app": "k9-brukerdialog-cache",
+  "cluster": "prod-gcp",
+  "namespace": "dusseldorf",
+  "team": "dusseldorf",
+  "minReplicas": "1",
+  "maxReplicas": "2",
+  "ingresses": [
+    "https://k9-brukerdialog-cache.nav.no"
+  ],
+  "externalHosts": [
+    "login.microsoftonline.com"
+  ],
+  "database": {
+    "name": "k9-brukerdialog-cache-db",
+    "envVarPrefix": "DB",
+    "type": "POSTGRES_12",
+    "tier": "db-custom-2-7680",
+    "diskSize": "100",
+    "diskType": "SSD",
+    "diskAutoresize": "true",
+    "highAvailability": "true"
+  },
+  "azureTenant": "nav.no",
+  "kafkaPool": "nav-prod",
+  "env": {
+    "SERVER_PORT": "8080",
+    "SPRING_APPLICATION_NAME": "k9-brukerdialog-cache",
+    "APPLICATION_INGRESS": "https://k9-brukerdialog-cache.nav.no",
+    "SPRING_PROFILES_ACTIVE": "prod-gcp"
+  },
+  "slack-channel": "sif-alerts",
+  "slack-notify-type": "<!here> | k9-brukerdialog-cache | "
+}

@@ -1,0 +1,35 @@
+version: '3'
+networks:
+  app-tier:
+    driver: bridge
+services:
+  db:
+    container_name: db
+    image: 'postgres:14'
+    networks:
+      - app-tier
+    restart: on-failure
+    hostname: localhost
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+
+  k9-brukerdialog-cache:
+    container_name: k9-brukerdialog-cache
+    image: 'k9-brukerdialog-cache-local:latest'
+    networks:
+      - app-tier
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    hostname: localhost
+    depends_on:
+      - db
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: password

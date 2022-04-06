@@ -1,0 +1,14 @@
+management:
+  endpoint:
+    web:
+      exposure:
+        include: '*'
+    health:
+      show-details: always
+
+spring:
+  mvc:
+    log-request-details: true
+  jpa:
+    hibernate:
+      ddl-auto: none
