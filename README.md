@@ -109,4 +109,3 @@ Vi bruker [nais-alerts](https://doc.nais.io/observability/alerts) for å sette o
 Spørsmål koden eller prosjekttet kan rettes til team dusseldorf på:
 * [\#sif-brukerdialog](https://nav-it.slack.com/archives/CQ7QKSHJR)
 
-
