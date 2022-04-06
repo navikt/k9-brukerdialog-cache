@@ -20,13 +20,13 @@ class SwaggerConfiguration {
             )
             .info(
                 Info()
-                    .title("Sif Innsyn Api")
+                    .title("K9 Brukerdialog Cache")
                     .description("API spesifikasjon for k9-brukerdialog-cache")
                     .version("v1.0.0")
             )
             .externalDocs(
                 ExternalDocumentation()
-                    .description("Sif Innsyn Api GitHub repository")
+                    .description("K9 Brukerdialog Cache GitHub repository")
                     .url("https://github.com/navikt/k9-brukerdialog-cache")
             )
     }
