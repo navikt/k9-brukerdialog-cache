@@ -18,6 +18,10 @@ spec:
     inbound:
       rules:
         - application: pleiepengesoknad-api
+        {{#if nonProd}}
+        - application: debug-dings
+          namespace: plattformsikkerhet
+        {{/if}}
     outbound:
       external:
         {{#each externalHosts as |host|}}

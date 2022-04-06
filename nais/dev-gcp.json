@@ -1,6 +1,7 @@
 {
   "app": "k9-brukerdialog-cache",
   "cluster": "dev-gcp",
+  "nonProd": "true",
   "namespace": "dusseldorf",
   "team": "dusseldorf",
   "minReplicas": "1",
