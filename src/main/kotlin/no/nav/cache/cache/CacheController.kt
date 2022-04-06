@@ -1,5 +1,6 @@
 package no.nav.cache.cache
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.cache.cache.CacheController.Endpoints.CACHE_PATH
 import no.nav.security.token.support.core.api.Protected
 import no.nav.security.token.support.spring.ProtectedRestController
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @ProtectedRestController(issuer = "tokenx")
+@SecurityRequirement(name = "bearer-jwt", scopes = ["read", "write"])
 class CacheController(
     private val cacheService: CacheService
 ) {
