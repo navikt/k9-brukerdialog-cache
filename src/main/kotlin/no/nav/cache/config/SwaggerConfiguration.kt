@@ -41,6 +41,13 @@ class SwaggerConfiguration {
                             .bearerFormat("JWT")
                             .`in`(SecurityScheme.In.HEADER)
                             .name("Authorization")
+                            .description("""
+                                Må være en gyldig tokenX token scopet for dev-gcp:dusseldorf:k9-brukerdialog-cache.
+                                For å teste apiet, kan du bruke debug-dings: https://debug-dings.dev-gcp.nais.io.
+                                Velg innloggingsmetode, og deretter velg en testbruker som beskrevet her: https://docs.digdir.no/docs/idporten/idporten/idporten_testbrukere
+                                Etter innlogging scroller du ned til `audience` og legger inn `dev-gcp:dusseldorf:k9-brukerdialog-cache` og henter token.
+                                Kopier `accessToken` og lim den inn her.
+                            """.trimIndent())
                     )
             )
             .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
