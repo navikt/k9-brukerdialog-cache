@@ -1,6 +1,6 @@
 package no.nav.cache.cache
 
-import no.nav.security.token.support.core.jwt.JwtToken
+import no.nav.cache.util.TokenUtils.personIdentifikator
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -21,20 +21,35 @@ class CacheService(
     }
 
     fun lagre(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
-        return repo.save(cacheEntryDTO.somCacheEntryDAO()).somCacheResponseDTO()
+        val fnr = tokenValidationContextHolder.personIdentifikator()
+        if (repo.existsById(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)))
+            throw CacheConflictException(cacheEntryDTO.nøkkelPrefiks)
+
+        return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
     }
 
-    fun hentVerdi(nøkkelPrefiks: String): CacheResponseDTO? {
-        val token = tokenValidationContextHolder.tokenValidationContext.firstValidToken.get()
-        val fnr = token.personIdentifikator()
+    fun oppdater(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
+        val fnr = tokenValidationContextHolder.personIdentifikator()
+        hent(cacheEntryDTO.nøkkelPrefiks)
+        return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
+    }
+
+    @Throws(CacheNotFoundException::class)
+    fun hent(nøkkelPrefiks: String): CacheResponseDTO {
+        val fnr = tokenValidationContextHolder.personIdentifikator()
         return repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr))?.let {
-            it.somCacheResponseDTO()
-        }
+            it.somCacheResponseDTO(fnr)
+        } ?: throw CacheNotFoundException(nøkkelPrefiks)
     }
 
-    private fun CacheEntryDAO.somCacheResponseDTO(): CacheResponseDTO {
-        val token = tokenValidationContextHolder.tokenValidationContext.firstValidToken.get()
-        val fnr = token.personIdentifikator()
+    @Throws(FailedCacheDeletionException::class)
+    fun slett(nøkkelPrefiks: String) {
+        val verdi = hent(nøkkelPrefiks)
+        repo.deleteById(verdi.nøkkel)
+        if (repo.existsById(verdi.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
+    }
+
+    private fun CacheEntryDAO.somCacheResponseDTO(fnr: String): CacheResponseDTO {
         val krypto = Krypto(passphrase = kryptoPassphrase, fnr = fnr)
         return CacheResponseDTO(
             nøkkel = nøkkel,
@@ -45,9 +60,7 @@ class CacheService(
         )
     }
 
-    private fun CacheRequestDTO.somCacheEntryDAO(): CacheEntryDAO {
-        val token = tokenValidationContextHolder.tokenValidationContext.firstValidToken.get()
-        val fnr = token.personIdentifikator()
+    private fun CacheRequestDTO.somCacheEntryDAO(fnr: String): CacheEntryDAO {
         val krypto = Krypto(passphrase = kryptoPassphrase, fnr = fnr)
         return CacheEntryDAO(
             nøkkel = genererNøkkel(nøkkelPrefiks, fnr),
@@ -59,8 +72,12 @@ class CacheService(
     }
 }
 
-private fun JwtToken.personIdentifikator(): String =
-    jwtTokenClaims["pid"] as String?
-        ?: jwtTokenClaims["sub"] as String?
-        ?: throw IllegalStateException("Token claims inneholder verken pid eller sub.")
+class CacheNotFoundException(nøkkelPrefiks: String) :
+    RuntimeException("Cache med nøkkelPrefiks = $nøkkelPrefiks for person ble ikke funnet.")
+
+class FailedCacheDeletionException(nøkkelPrefiks: String) :
+    RuntimeException("Feilet med å slette cache med nøkkelPrefiks = $nøkkelPrefiks for person.")
+
+class CacheConflictException(nøkkelPrefiks: String) :
+    RuntimeException("Cache med nøkkelPrefiks = $nøkkelPrefiks finnes allerede for person.")
 

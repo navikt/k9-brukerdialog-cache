@@ -19,6 +19,15 @@ object RestTemplateUtils {
         return response.body!!
     }
 
+    inline fun <reified RequestBody> TestRestTemplate.deleteAndAssert(
+        uri: String,
+        request: HttpEntity<RequestBody>,
+        expectedStatus: HttpStatus
+    ) {
+        val response = exchange(uri, HttpMethod.DELETE, request, Unit::class.java)
+        assertThat(response.statusCode).isEqualTo(expectedStatus)
+    }
+
     inline fun <reified RequestBody, reified ResponseBody> TestRestTemplate.getAndAssert(
         uri: String,
         request: HttpEntity<RequestBody>,
@@ -28,7 +37,20 @@ object RestTemplateUtils {
         val response = exchange(uri, HttpMethod.GET, request, ResponseBody::class.java)
         assertThat(response.statusCode).isEqualTo(expectedStatus)
         val body = response.body
-        assertThat(body).isEqualTo(expectedBody)
+        if (expectedBody !is Unit) assertThat(body).isEqualTo(expectedBody)
+        return body
+    }
+
+    inline fun <reified RequestBody, reified ResponseBody : Any> TestRestTemplate.putAndAssert(
+        uri: String,
+        request: HttpEntity<RequestBody>,
+        expectedStatus: HttpStatus,
+        expectedBody: ResponseBody?
+    ): ResponseBody? {
+        val response = exchange(uri, HttpMethod.PUT, request, ResponseBody::class.java)
+        assertThat(response.statusCode).isEqualTo(expectedStatus)
+        val body = response.body
+        if (expectedBody !== null) assertThat(body).isEqualTo(expectedBody)
         return body
     }
 }

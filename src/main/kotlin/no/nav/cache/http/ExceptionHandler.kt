@@ -1,5 +1,8 @@
 package no.nav.cache.http
 
+import no.nav.cache.cache.CacheConflictException
+import no.nav.cache.cache.CacheNotFoundException
+import no.nav.cache.cache.FailedCacheDeletionException
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
@@ -36,7 +39,7 @@ class ExceptionHandler : ProblemHandling, AdviceTrait {
 
     @ExceptionHandler(value = [CacheNotFoundException::class])
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun håndterSøknadIkkeFunnet(
+    fun håndterCacheIkkeFunnet(
         exception: CacheNotFoundException,
         request: ServletWebRequest
     ): ResponseEntity<Problem> {
@@ -49,9 +52,43 @@ class ExceptionHandler : ProblemHandling, AdviceTrait {
             .withInstance(URI(URLDecoder.decode(request.request.requestURL.toString(), Charset.defaultCharset())))
             .build()
 
-        return create(
-            throwableProblem, request
-        )
+        return create(throwableProblem, request)
+    }
+
+    @ExceptionHandler(value = [FailedCacheDeletionException::class])
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun håndterSlettingAvCacheFeil(
+        exception: FailedCacheDeletionException,
+        request: ServletWebRequest
+    ): ResponseEntity<Problem> {
+
+        val throwableProblem = Problem.builder()
+            .withType(URI("/problem-details/sletting-av-cache-feilet"))
+            .withTitle("Sletting av cache feilet")
+            .withStatus(Status.INTERNAL_SERVER_ERROR)
+            .withDetail(exception.message)
+            .withInstance(URI(URLDecoder.decode(request.request.requestURL.toString(), Charset.defaultCharset())))
+            .build()
+
+        return create(throwableProblem, request)
+    }
+
+    @ExceptionHandler(value = [CacheConflictException::class])
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun håndterCacheKonfliktFeil(
+        exception: CacheConflictException,
+        request: ServletWebRequest
+    ): ResponseEntity<Problem> {
+
+        val throwableProblem = Problem.builder()
+            .withType(URI("/problem-details/cache-konflikt"))
+            .withTitle("Cache med eksisterende nøkkel eksisterer allerede.")
+            .withStatus(Status.CONFLICT)
+            .withDetail(exception.message)
+            .withInstance(URI(URLDecoder.decode(request.request.requestURL.toString(), Charset.defaultCharset())))
+            .build()
+
+        return create(throwableProblem, request)
     }
 
     @ExceptionHandler(value = [JwtTokenUnauthorizedException::class])
@@ -111,5 +148,3 @@ class ExceptionHandler : ProblemHandling, AdviceTrait {
         logger.error("{} - {}, {}", status, exception, request.toString())
     }
 }
-
-class CacheNotFoundException(søknadId: String) : RuntimeException("Søknad med søknadId = $søknadId ble ikke funnet.")

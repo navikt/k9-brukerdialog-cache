@@ -6,7 +6,6 @@ import no.nav.security.token.support.core.api.Protected
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus.*
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @ProtectedRestController(issuer = "tokenx")
@@ -24,19 +23,38 @@ class CacheController(
 
     @PostMapping(CACHE_PATH)
     @ResponseStatus(CREATED)
-    fun lagreVerdi(@RequestBody cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
+    fun lagre(@RequestBody cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
         logger.info("Oppretter ny cache entry...")
-        val verdi = this.cacheService.lagre(cacheEntryDTO)
+        val cache = this.cacheService.lagre(cacheEntryDTO)
         logger.info("Cache entry opprettet.")
-        return verdi
+        return cache
     }
 
     @GetMapping("$CACHE_PATH/{nokkel-prefiks}")
     @Protected
     @ResponseStatus(OK)
-    fun hentVerdi(@PathVariable("nokkel-prefiks", required = true) nøkkel: String): ResponseEntity<CacheResponseDTO>? {
-        val verdi = this.cacheService.hentVerdi(nøkkel)
-        return if (verdi == null) ResponseEntity(NOT_FOUND)
-        else ResponseEntity(verdi, OK)
+    fun hent(@PathVariable("nokkel-prefiks", required = true) nøkkelPrefiks: String): CacheResponseDTO {
+        logger.info("Henter entry cache entry...")
+        val cache = this.cacheService.hent(nøkkelPrefiks)
+        logger.info("Cache entry hentet.")
+        return cache
+    }
+
+    @PutMapping("$CACHE_PATH/{nokkel-prefiks}")
+    @ResponseStatus(OK)
+    fun oppdater(@RequestBody cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
+        logger.info("Oppdaterer cache entry...")
+        val cache = this.cacheService.oppdater(cacheEntryDTO)
+        logger.info("Cache entry oppdatert.")
+        return cache
+    }
+
+    @DeleteMapping("$CACHE_PATH/{nokkel-prefiks}")
+    @Protected
+    @ResponseStatus(NO_CONTENT)
+    fun slett(@PathVariable("nokkel-prefiks", required = true) nøkkePrefiks: String) {
+        logger.info("Sletter cache entry...")
+        this.cacheService.slett(nøkkePrefiks)
+        logger.info("Cache entry slettet.")
     }
 }
