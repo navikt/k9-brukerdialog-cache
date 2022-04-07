@@ -1,12 +1,13 @@
 no.nav:
   security:
-    cors:
-      allowed-origins: # Settes i nais/<cluster>.json
     jwt:
       issuer:
         tokenx:
           discoveryUrl: ${TOKEN_X_WELL_KNOWN_URL}
           accepted_audience: ${TOKEN_X_CLIENT_ID}
+
+  scheduled:
+    utgått-cache: 300000 # 5 minutter
 
 management:
   endpoints:

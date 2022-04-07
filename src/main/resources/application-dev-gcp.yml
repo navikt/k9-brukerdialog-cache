@@ -9,6 +9,3 @@ management:
 spring:
   mvc:
     log-request-details: true
-  jpa:
-    hibernate:
-      ddl-auto: none

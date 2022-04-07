@@ -15,6 +15,7 @@ import no.nav.cache.utils.hentToken
 import no.nav.cache.utils.tokenTilHeader
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
+import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,6 +28,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.zalando.problem.Problem
+import java.time.Duration
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 
@@ -38,7 +40,7 @@ import java.time.ZonedDateTime
 @ExtendWith(SpringExtension::class)
 @EnableMockOAuth2Server
 @ActiveProfiles("test")
-internal class CacheControllerTest {
+internal class IntegrationTest {
 
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
@@ -234,6 +236,39 @@ internal class CacheControllerTest {
             expectedStatus = HttpStatus.NOT_FOUND,
             expectedBody = Unit
         )
+    }
+
+    @Test
+    fun `gitt 2 utgåtte cache, forvent at begge slettes`() {
+        val now = ZonedDateTime.now(UTC)
+        val utløpsdato = now.plusMinutes(1)
+
+        cacheRepository.saveAll(
+            listOf(
+                CacheEntryDAO(
+                    nøkkel = "nøkkel-1",
+                    verdi = "cache som utløper 1",
+                    utløpsdato = utløpsdato,
+                    opprettet = now.minusHours(1)
+                ),
+                CacheEntryDAO(
+                    nøkkel = "nøkkel-2",
+                    verdi = "cache som utløper 2",
+                    utløpsdato = utløpsdato,
+                    opprettet = now.minusHours(1)
+                ),
+                CacheEntryDAO(
+                    nøkkel = "nøkkel-3",
+                    verdi = "skal ikke utløpe enda",
+                    utløpsdato = utløpsdato.minusMinutes(30),
+                    opprettet = now.minusHours(1)
+                )
+            )
+        )
+        assertThat(cacheRepository.count()).isEqualTo(3)
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            assertThat(cacheRepository.count()).isEqualTo(1)
+        }
     }
 
     private fun hentToken(fnr: String = "12345678910"): SignedJWT = mockOAuth2Server.hentToken(subject = fnr)

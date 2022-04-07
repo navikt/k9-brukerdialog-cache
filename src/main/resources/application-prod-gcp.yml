@@ -2,8 +2,3 @@ management:
   endpoint:
     health:
       show-details: never
-
-spring:
-  jpa:
-    hibernate:
-      ddl-auto: none

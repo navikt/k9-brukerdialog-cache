@@ -6,11 +6,8 @@ no.nav:
           discoveryurl: http://localhost:${mock-oauth2-server.port}/tokenx/.well-known/openid-configuration
           accepted_audience: aud-localhost
 
-    cors:
-      allowed-origins: http://localhost:8080
-
-  metrics:
-    interval: 36000
+  scheduled:
+    utgått-cache: 1000 # 1 sekund
 
 spring:
   mvc:

@@ -4,6 +4,7 @@ import no.nav.cache.util.TokenUtils.personIdentifikator
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
@@ -47,6 +48,13 @@ class CacheService(
         val verdi = hent(nøkkelPrefiks)
         repo.deleteById(verdi.nøkkel)
         if (repo.existsById(verdi.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
+    }
+
+    @Scheduled(fixedRateString = "#{'\${no.nav.scheduled.utgått-cache}'}")
+    fun slettUtgåtteCache() {
+        logger.info("Sletter utgåtte cache...")
+        val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsAfter(ZonedDateTime.now(UTC))
+        logger.info("Slettet {} utgåtte cache.", antallSlettedeCache)
     }
 
     private fun CacheEntryDAO.somCacheResponseDTO(fnr: String): CacheResponseDTO {
