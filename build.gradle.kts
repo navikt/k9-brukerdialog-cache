@@ -18,14 +18,11 @@ configurations {
     }
 }
 
-val confluentVersion by extra("5.5.0")
 val logstashLogbackEncoderVersion by extra("6.6")
 val tokenSupportVersion by extra("1.3.19")
 val springCloudVersion by extra("2021.0.1")
 val retryVersion by extra("1.3.0")
 val zalandoVersion by extra("0.26.2")
-val openhtmltopdfVersion = "1.0.10"
-val handlebarsVersion = "4.3.0"
 val hibernateTypes52Version by extra("2.11.1")
 val awailitilityKotlinVersion by extra("4.1.0")
 val assertkJvmVersion by extra("0.24")
@@ -34,31 +31,15 @@ val mockkVersion by extra("1.11.0")
 val guavaVersion by extra("23.0")
 val okHttp3Version by extra("4.9.1")
 val orgJsonVersion by extra("20210307")
-val graphQLKotlinVersion by extra("5.3.2")
-val k9FormatVersion by extra("5.5.20")
-val teamDokumenthåndteringAvroSchemaVersion by extra("bbea40a3")
-val springdocVersion by extra("1.6.6")
+val springdocVersion by extra("1.6.7")
 
 ext["okhttp3.version"] = okHttp3Version
 ext["testcontainersVersion"] = "1.16.3"
 
 repositories {
     mavenCentral()
-
-    maven {
-        name = "confluent"
-        url = uri("https://packages.confluent.io/maven/")
-    }
-
-    maven {
-        name = "k9FormatPakker"
-        url = uri("https://maven.pkg.github.com/navikt/k9-format")
-        credentials {
-            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
-            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
 }
+
 dependencies {
 
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
@@ -87,7 +68,6 @@ dependencies {
     // Swagger (openapi 3)
     implementation("org.springdoc:springdoc-openapi-kotlin:$springdocVersion")
     implementation("org.springdoc:springdoc-openapi-ui:$springdocVersion")
-
 
     // Metrics
     implementation("io.micrometer:micrometer-registry-prometheus")
