@@ -18,19 +18,19 @@ configurations {
     }
 }
 
-val logstashLogbackEncoderVersion by extra("6.6")
-val tokenSupportVersion by extra("1.3.19")
+val logstashLogbackEncoderVersion by extra("7.0.1")
+val tokenSupportVersion by extra("2.0.14")
 val springCloudVersion by extra("2021.0.1")
 val retryVersion by extra("1.3.0")
-val zalandoVersion by extra("0.26.2")
-val hibernateTypes52Version by extra("2.11.1")
-val awailitilityKotlinVersion by extra("4.1.0")
-val assertkJvmVersion by extra("0.24")
-val springMockkVersion by extra("3.0.1")
-val mockkVersion by extra("1.11.0")
-val guavaVersion by extra("23.0")
-val okHttp3Version by extra("4.9.1")
-val orgJsonVersion by extra("20210307")
+val zalandoVersion by extra("0.27.0")
+val hibernateTypes52Version by extra("2.15.1")
+val awailitilityKotlinVersion by extra("4.1.1")
+val assertkJvmVersion by extra("0.25")
+val springMockkVersion by extra("3.1.1")
+val mockkVersion by extra("1.12.3")
+val guavaVersion by extra("31.1-jre")
+val okHttp3Version by extra("4.9.3")
+val orgJsonVersion by extra("20220320")
 val springdocVersion by extra("1.6.7")
 
 ext["okhttp3.version"] = okHttp3Version
