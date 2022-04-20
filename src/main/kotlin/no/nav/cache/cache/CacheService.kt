@@ -26,12 +26,15 @@ class CacheService(
         if (repo.existsById(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)))
             throw CacheConflictException(cacheEntryDTO.nøkkelPrefiks)
 
+        logger.info("DEEBUG cacheRequest: {}", cacheEntryDTO)
         return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
     }
 
     fun oppdater(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
         hent(cacheEntryDTO.nøkkelPrefiks)
+
+        logger.info("DEEBUG cacheRequest: {}", cacheEntryDTO)
         return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
     }
 
