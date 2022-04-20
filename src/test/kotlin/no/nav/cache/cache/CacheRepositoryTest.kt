@@ -32,7 +32,7 @@ class CacheRepositoryTest {
     @Test
     fun `gitt 2 utgåtte cache, forvent at begge slettes`() {
         val now = ZonedDateTime.now(UTC)
-        val utløpsdato = now.plusMinutes(1)
+        val utløpsdato = now.minusMinutes(1)
 
         repository.saveAll(
             listOf(
@@ -51,13 +51,13 @@ class CacheRepositoryTest {
                 CacheEntryDAO(
                     nøkkel = "nøkkel-3",
                     verdi = "skal ikke utløpe enda",
-                    utløpsdato = utløpsdato.minusMinutes(30),
+                    utløpsdato = utløpsdato.plusMinutes(30),
                     opprettet = now.minusHours(1)
                 )
             )
         )
         assertThat(repository.count()).isEqualTo(3)
-        assertThat(repository.deleteAllByUtløpsdatoIsAfter(now)).isEqualTo(2)
+        assertThat(repository.deleteAllByUtløpsdatoIsBefore(now)).isEqualTo(2)
         assertThat(repository.count()).isEqualTo(1)
     }
 }

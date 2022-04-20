@@ -241,7 +241,7 @@ internal class IntegrationTest {
     @Test
     fun `gitt 2 utgåtte cache, forvent at begge slettes`() {
         val now = ZonedDateTime.now(UTC)
-        val utløpsdato = now.plusMinutes(1)
+        val utløpsdato = now.minusMinutes(1)
 
         cacheRepository.saveAll(
             listOf(
@@ -260,7 +260,7 @@ internal class IntegrationTest {
                 CacheEntryDAO(
                     nøkkel = "nøkkel-3",
                     verdi = "skal ikke utløpe enda",
-                    utløpsdato = utløpsdato.minusMinutes(30),
+                    utløpsdato = utløpsdato.plusMinutes(30),
                     opprettet = now.minusHours(1)
                 )
             )

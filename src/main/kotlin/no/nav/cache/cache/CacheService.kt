@@ -26,15 +26,12 @@ class CacheService(
         if (repo.existsById(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)))
             throw CacheConflictException(cacheEntryDTO.nøkkelPrefiks)
 
-        logger.info("DEEBUG cacheRequest: {}", cacheEntryDTO)
         return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
     }
 
     fun oppdater(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
         hent(cacheEntryDTO.nøkkelPrefiks)
-
-        logger.info("DEEBUG cacheRequest: {}", cacheEntryDTO)
         return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
     }
 
@@ -56,7 +53,7 @@ class CacheService(
     @Scheduled(fixedRateString = "#{'\${no.nav.scheduled.utgått-cache}'}")
     fun slettUtgåtteCache() {
         logger.info("Sletter utgåtte cache...")
-        val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsAfter(ZonedDateTime.now(UTC))
+        val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsBefore(ZonedDateTime.now(UTC))
         logger.info("Slettet {} utgåtte cache.", antallSlettedeCache)
     }
 
