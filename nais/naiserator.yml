@@ -18,6 +18,7 @@ spec:
     inbound:
       rules:
         - application: pleiepengesoknad-api
+        - application: k9-brukerdialog-api
         {{#if nonProd}}
         - application: debug-dings
           namespace: plattformsikkerhet
