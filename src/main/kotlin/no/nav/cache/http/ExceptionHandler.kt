@@ -9,6 +9,7 @@ import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnaut
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -43,7 +44,7 @@ class ExceptionHandler : ProblemHandling, AdviceTrait {
         exception: CacheNotFoundException,
         request: ServletWebRequest
     ): ResponseEntity<Problem> {
-
+        logger.trace("$exception")
         val throwableProblem = Problem.builder()
             .withType(URI("/problem-details/cache-ikke-funnet"))
             .withTitle("Cache ikke funnet")
@@ -52,7 +53,10 @@ class ExceptionHandler : ProblemHandling, AdviceTrait {
             .withInstance(URI(URLDecoder.decode(request.request.requestURL.toString(), Charset.defaultCharset())))
             .build()
 
-        return create(throwableProblem, request)
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(throwableProblem)
     }
 
     @ExceptionHandler(value = [FailedCacheDeletionException::class])
