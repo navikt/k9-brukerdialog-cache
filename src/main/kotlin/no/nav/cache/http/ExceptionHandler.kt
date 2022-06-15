@@ -42,17 +42,9 @@ class ExceptionHandler : ProblemHandling, AdviceTrait {
     fun håndterCacheIkkeFunnet(
         exception: CacheNotFoundException,
         request: ServletWebRequest
-    ): ResponseEntity<Problem> {
-
-        val throwableProblem = Problem.builder()
-            .withType(URI("/problem-details/cache-ikke-funnet"))
-            .withTitle("Cache ikke funnet")
-            .withStatus(Status.NOT_FOUND)
-            .withDetail(exception.message)
-            .withInstance(URI(URLDecoder.decode(request.request.requestURL.toString(), Charset.defaultCharset())))
-            .build()
-
-        return create(throwableProblem, request)
+    ): ResponseEntity<HttpStatus> {
+        logger.info("$exception")
+        return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     @ExceptionHandler(value = [FailedCacheDeletionException::class])
