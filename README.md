@@ -1,4 +1,4 @@
-# SIF Innsynstjeneste
+# K9-brukerdialog-cache
 
 ![CI / CD](https://github.com/navikt/k9-brukerdialog-cache/workflows/CI%20/%20CD/badge.svg)
 ![Alerts](https://github.com/navikt/k9-brukerdialog-cache/workflows/Alerts/badge.svg)
