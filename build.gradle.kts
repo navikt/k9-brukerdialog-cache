@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.7.3"
-    id("io.spring.dependency-management") version "1.0.13.RELEASE"
+    id("org.springframework.boot") version "2.7.4"
+    id("io.spring.dependency-management") version "1.0.14.RELEASE"
     kotlin("jvm") version "1.7.10"
     kotlin("plugin.spring") version "1.7.10"
     kotlin("plugin.jpa") version "1.7.10"
@@ -43,6 +43,13 @@ repositories {
 }
 
 dependencies {
+
+    // Overstyrer snakeyaml grunnet sårbarhet i v1.30. Kan fjernes når avhengiheter har oppdatert.
+    implementation("org.yaml:snakeyaml") {
+        version {
+            strictly("1.32")
+        }
+    }
 
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
     testImplementation("no.nav.security:token-validation-spring-test:$tokenSupportVersion")
