@@ -4,13 +4,13 @@ import java.security.InvalidAlgorithmParameterException
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import java.util.*
-import javax.crypto.Cipher
 import javax.crypto.NoSuchPaddingException
-import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
+import javax.crypto.Cipher
+import javax.crypto.SecretKey
 
 class Krypto(passphrase: String, fnr: String) {
     private val key: SecretKey

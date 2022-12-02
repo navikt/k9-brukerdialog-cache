@@ -25,9 +25,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.zalando.problem.Problem
 import java.time.Duration
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
@@ -156,7 +156,7 @@ internal class IntegrationTest {
             expectedStatus = HttpStatus.CREATED
         )
 
-        restTemplate.postAndAssert<CacheRequestDTO, Problem>(
+        restTemplate.postAndAssert<CacheRequestDTO, ProblemDetail>(
             uri = CACHE_PATH,
             request = HttpEntity(/* body = */ requestDTO, /* headers = */ hentToken().tokenTilHeader()),
             expectedStatus = HttpStatus.CONFLICT
