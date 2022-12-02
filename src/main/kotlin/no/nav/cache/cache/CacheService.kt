@@ -1,11 +1,18 @@
 package no.nav.cache.cache
 
+import no.nav.cache.util.ServletUtils
 import no.nav.cache.util.TokenUtils.personIdentifikator
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.web.ErrorResponseException
+import java.net.URI
+import java.net.URLDecoder
+import java.nio.charset.Charset
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 
@@ -80,12 +87,48 @@ class CacheService(
     }
 }
 
-class CacheNotFoundException(nøkkelPrefiks: String) :
-    RuntimeException("Cache med nøkkelPrefiks = $nøkkelPrefiks for person ble ikke funnet.")
+class CacheNotFoundException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.NOT_FOUND, asProblemDetail(nøkkelPrefiks), null) {
+    private companion object {
+        private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
+            val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
+            problemDetail.title = "Cache ikke funnet"
+            problemDetail.detail = "Cache med nøkkelPrefiks = $nøkkelPrefiks for person ble ikke funnet."
+            problemDetail.type = URI("/problem-details/cache-ikke-funnet")
+            ServletUtils.currentHttpRequest()?.let {
+                problemDetail.instance = URI(URLDecoder.decode(it.requestURL.toString(), Charset.defaultCharset()))
+            }
+            return problemDetail
+        }
+    }
+}
 
-class FailedCacheDeletionException(nøkkelPrefiks: String) :
-    RuntimeException("Feilet med å slette cache med nøkkelPrefiks = $nøkkelPrefiks for person.")
 
-class CacheConflictException(nøkkelPrefiks: String) :
-    RuntimeException("Cache med nøkkelPrefiks = $nøkkelPrefiks finnes allerede for person.")
+class FailedCacheDeletionException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, asProblemDetail(nøkkelPrefiks), null) {
+    private companion object {
+        private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
+            val problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+            problemDetail.title = "Sletting av cache feilet"
+            problemDetail.detail = "Feilet med å slette cache med nøkkelPrefiks = $nøkkelPrefiks for person."
+            problemDetail.type = URI("/problem-details/sletting-av-cache-feilet")
+            ServletUtils.currentHttpRequest()?.let {
+                problemDetail.instance = URI(URLDecoder.decode(it.requestURL.toString(), Charset.defaultCharset()))
+            }
+            return problemDetail
+        }
+    }
+}
+class CacheConflictException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.CONFLICT, asProblemDetail(nøkkelPrefiks), null) {
+    private companion object {
+        private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
+            val problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT)
+            problemDetail.title = "Cache med eksisterende nøkkel eksisterer allerede."
+            problemDetail.detail = "Cache med nøkkelPrefiks = $nøkkelPrefiks finnes allerede for person."
+            problemDetail.type = URI("/problem-details/cache-konflikt")
+            ServletUtils.currentHttpRequest()?.let {
+                problemDetail.instance = URI(URLDecoder.decode(it.requestURL.toString(), Charset.defaultCharset()))
+            }
+            return problemDetail
+        }
+    }
+}
 
