@@ -1,5 +1,13 @@
 # K9-brukerdialog-cache
 
+![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-brukerdialog-cache&metric=ncloc)
+![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-brukerdialog-cache&metric=alert_status)
+![Coverage](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-brukerdialog-cache&metric=coverage)
+![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-brukerdialog-cache&metric=code_smells)
+![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-brukerdialog-cache&metric=sqale_index)
+![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-brukerdialog-cache&metric=duplicated_lines_density)
+![Bugs](https://sonarcloud.io/api/project_badges/measure?project=navikt_k9-brukerdialog-cache&metric=bugs)
+
 ![CI / CD](https://github.com/navikt/k9-brukerdialog-cache/workflows/CI%20/%20CD/badge.svg)
 ![Alerts](https://github.com/navikt/k9-brukerdialog-cache/workflows/Alerts/badge.svg)
 ![Vulnerabilities scanning of dependencies](https://github.com/navikt/k9-brukerdialog-cache/workflows/Vulnerabilities%20scanning%20of%20dependencies/badge.svg)
