@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.22"
-    kotlin("plugin.spring") version "1.7.22"
-    kotlin("plugin.jpa") version "1.7.22"
-    id("org.springframework.boot") version "3.0.0"
+    kotlin("jvm") version "1.8.10"
+    kotlin("plugin.spring") version "1.8.10"
+    kotlin("plugin.jpa") version "1.8.10"
+    id("org.springframework.boot") version "3.0.4"
     id("io.spring.dependency-management") version "1.1.0"
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "4.0.0.2929"
     jacoco
 }
 
@@ -21,7 +21,7 @@ configurations {
 }
 
 val logstashLogbackEncoderVersion by extra("7.2")
-val tokenSupportVersion by extra("3.0.0")
+val tokenSupportVersion by extra("3.0.4")
 val springCloudVersion by extra("2022.0.0-RC2")
 val retryVersion by extra("2.0.2")
 val postgresqlVersion by extra("42.5.1")
