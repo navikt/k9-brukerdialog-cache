@@ -3,38 +3,34 @@ package no.nav.cache.utils
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.RequestEntity
 
 object RestTemplateUtils {
 
     inline fun <reified RequestBody, reified ResponseBody> TestRestTemplate.postAndAssert(
-        uri: String,
-        request: HttpEntity<RequestBody>,
+        request: RequestEntity<RequestBody>,
         expectedStatus: HttpStatus
     ): ResponseBody {
-        val response = exchange(uri, HttpMethod.POST, request, ResponseBody::class.java)
+        val response = exchange(request, ResponseBody::class.java)
         assertThat(response.statusCode).isEqualTo(expectedStatus)
         return response.body!!
     }
 
-    inline fun <reified RequestBody> TestRestTemplate.deleteAndAssert(
-        uri: String,
-        request: HttpEntity<RequestBody>,
+    fun TestRestTemplate.deleteAndAssert(
+        request: RequestEntity<Void>,
         expectedStatus: HttpStatus
     ) {
-        val response = exchange(uri, HttpMethod.DELETE, request, Unit::class.java)
+        val response = exchange(request, Unit::class.java)
         assertThat(response.statusCode).isEqualTo(expectedStatus)
     }
 
-    inline fun <reified RequestBody, reified ResponseBody> TestRestTemplate.getAndAssert(
-        uri: String,
-        request: HttpEntity<RequestBody>,
+    inline fun <reified ResponseBody> TestRestTemplate.getAndAssert(
+        request: RequestEntity<Void>,
         expectedStatus: HttpStatus,
         expectedBody: ResponseBody?
     ): ResponseBody? {
-        val response = exchange(uri, HttpMethod.GET, request, ResponseBody::class.java)
+        val response = exchange(request, ResponseBody::class.java)
         assertThat(response.statusCode).isEqualTo(expectedStatus)
         val body = response.body
         if (expectedBody !is Unit) assertThat(body).isEqualTo(expectedBody)
@@ -42,12 +38,11 @@ object RestTemplateUtils {
     }
 
     inline fun <reified RequestBody, reified ResponseBody : Any> TestRestTemplate.putAndAssert(
-        uri: String,
-        request: HttpEntity<RequestBody>,
+        request: RequestEntity<RequestBody>,
         expectedStatus: HttpStatus,
         expectedBody: ResponseBody?
     ): ResponseBody? {
-        val response = exchange(uri, HttpMethod.PUT, request, ResponseBody::class.java)
+        val response = exchange(request, ResponseBody::class.java)
         assertThat(response.statusCode).isEqualTo(expectedStatus)
         val body = response.body
         if (expectedBody !== null) assertThat(body).isEqualTo(expectedBody)

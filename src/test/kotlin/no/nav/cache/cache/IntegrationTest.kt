@@ -23,9 +23,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
+import org.springframework.http.RequestEntity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
@@ -60,25 +61,30 @@ internal class IntegrationTest {
 
     @Test
     fun `gitt cache lagres, forvent samme verdi ved henting`() {
-        val requestDTO = CacheRequestDTO(
-            nøkkelPrefiks = "mellomlagring_psb",
-            verdi = "verdi-123",
-            utløpsdato = ZonedDateTime.now().plusDays(3)
-        )
-
+        val postRequest = RequestEntity
+            .post(CACHE_PATH)
+            .headers(hentToken().tokenTilHeader())
+            .body(
+                CacheRequestDTO(
+                    nøkkelPrefiks = "mellomlagring_psb",
+                    verdi = "verdi-123",
+                    utløpsdato = ZonedDateTime.now().plusDays(3)
+                )
+            )
         val cacheResponseDTO: CacheResponseDTO = restTemplate.postAndAssert(
-            uri = CACHE_PATH,
-            request = HttpEntity(/* body = */ requestDTO, /* headers = */ hentToken().tokenTilHeader()),
+            request = postRequest,
             expectedStatus = HttpStatus.CREATED
         )
 
         val cacheInDB = cacheRepository.findByNøkkel(cacheResponseDTO.nøkkel)
         assertThat(cacheInDB).isNotNull()
-        assertThat(cacheInDB!!.verdi).isNotEqualTo(requestDTO.verdi)
+        assertThat(cacheInDB!!.verdi).isNotEqualTo(postRequest.body!!.verdi)
 
-        restTemplate.getAndAssert<Any, CacheResponseDTO>(
-            uri = "$CACHE_PATH/mellomlagring_psb",
-            request = HttpEntity(/* headers = */  hentToken().tokenTilHeader()),
+        restTemplate.getAndAssert(
+            request = RequestEntity
+                .get("$CACHE_PATH/mellomlagring_psb")
+                .headers(hentToken().tokenTilHeader())
+                .build(),
             expectedStatus = HttpStatus.OK,
             expectedBody = cacheResponseDTO
         )
@@ -87,99 +93,126 @@ internal class IntegrationTest {
     @Test
     fun `gitt cache eksisterer, forvent at den oppdateres som forventet`() {
         val utløpsdato = ZonedDateTime.now(UTC).plusDays(3)
-        val requestDTO = CacheRequestDTO(
-            nøkkelPrefiks = "mellomlagring_psb",
-            verdi = "verdi-123",
-            utløpsdato = utløpsdato
-        )
 
         restTemplate.postAndAssert<CacheRequestDTO, CacheResponseDTO>(
-            uri = CACHE_PATH,
-            request = HttpEntity(/* body = */ requestDTO, /* headers = */ hentToken().tokenTilHeader()),
+            request = RequestEntity
+                .post(CACHE_PATH)
+                .headers(hentToken().tokenTilHeader())
+                .body(
+                    CacheRequestDTO(
+                        nøkkelPrefiks = "mellomlagring_psb",
+                        verdi = "verdi-123",
+                        utløpsdato = utløpsdato
+                    )
+                ),
             expectedStatus = HttpStatus.CREATED
         )
 
         val body = restTemplate.putAndAssert<CacheRequestDTO, CacheResponseDTO>(
-            uri = "$CACHE_PATH/mellomlagring_psb",
-            request = HttpEntity(
-                /* body = */ requestDTO.copy(verdi = "endret-verdi-456"),
-                /* headers = */hentToken().tokenTilHeader()
-            ),
+            request = RequestEntity
+                .put("$CACHE_PATH/mellomlagring_psb")
+                .headers(hentToken().tokenTilHeader())
+                .body(
+                    CacheRequestDTO(
+                        nøkkelPrefiks = "mellomlagring_psb",
+                        verdi = "endret-verdi-456",
+                        utløpsdato = utløpsdato
+                    )
+                ),
             expectedStatus = HttpStatus.OK,
             expectedBody = null
         )
         assertThat(body as CacheResponseDTO).isNotNull()
         assertThat(body.nøkkel).isEqualTo("mellomlagring_psb_12345678910")
         assertThat(body.verdi).isEqualTo("endret-verdi-456")
-
     }
 
     @Test
     fun `gitt cache eksisterer, forvent at den blir slettet som forventet`() {
-        val requestDTO = CacheRequestDTO(
-            nøkkelPrefiks = "mellomlagring_psb",
-            verdi = "verdi-123",
-            utløpsdato = ZonedDateTime.now().plusDays(3)
-        )
         restTemplate.postAndAssert<CacheRequestDTO, CacheResponseDTO>(
-            uri = CACHE_PATH,
-            request = HttpEntity(/* body = */ requestDTO, /* headers = */ hentToken().tokenTilHeader()),
+            request = RequestEntity
+                .post(CACHE_PATH)
+                .headers(hentToken().tokenTilHeader())
+                .body(
+                    CacheRequestDTO(
+                        nøkkelPrefiks = "mellomlagring_psb",
+                        verdi = "verdi-123",
+                        utløpsdato = ZonedDateTime.now().plusDays(3)
+                    )
+                ),
             expectedStatus = HttpStatus.CREATED
         )
 
-        restTemplate.deleteAndAssert<Any>(
-            uri = "$CACHE_PATH/mellomlagring_psb",
-            request = HttpEntity(/* headers = */  hentToken().tokenTilHeader()),
+        restTemplate.deleteAndAssert(
+            request = RequestEntity
+                .delete("$CACHE_PATH/mellomlagring_psb")
+                .headers(hentToken().tokenTilHeader())
+                .build(),
             expectedStatus = HttpStatus.NO_CONTENT
         )
     }
 
     @Test
     fun `gitt cache ikke eksisterer, forvent ikke-funnet feil`() {
-        restTemplate.deleteAndAssert<Any>(
-            uri = "$CACHE_PATH/mellomlagring_psb",
-            request = HttpEntity(/* headers = */  hentToken().tokenTilHeader()),
+        restTemplate.deleteAndAssert(
+            request = RequestEntity
+                .delete("$CACHE_PATH/mellomlagring_psb")
+                .headers(hentToken().tokenTilHeader())
+                .build(),
             expectedStatus = HttpStatus.NOT_FOUND
         )
     }
 
     @Test
     fun `gitt cache med nøkkelPrefiks eksisterer på person, forvent konfliktfeil`() {
-        val requestDTO = CacheRequestDTO(
+        val cacheRequestDTO = CacheRequestDTO(
             nøkkelPrefiks = "mellomlagring_psb",
             verdi = "verdi-123",
             utløpsdato = ZonedDateTime.now().plusDays(3)
         )
+
         restTemplate.postAndAssert<CacheRequestDTO, CacheResponseDTO>(
-            uri = CACHE_PATH,
-            request = HttpEntity(/* body = */ requestDTO, /* headers = */ hentToken().tokenTilHeader()),
+            request = RequestEntity
+                .post(CACHE_PATH)
+                .headers(hentToken().tokenTilHeader())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(cacheRequestDTO),
             expectedStatus = HttpStatus.CREATED
         )
 
         restTemplate.postAndAssert<CacheRequestDTO, ProblemDetail>(
-            uri = CACHE_PATH,
-            request = HttpEntity(/* body = */ requestDTO, /* headers = */ hentToken().tokenTilHeader()),
+            request = RequestEntity
+                .post(CACHE_PATH)
+                .headers(hentToken().tokenTilHeader())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(cacheRequestDTO),
             expectedStatus = HttpStatus.CONFLICT
         )
     }
 
     @Test
     fun `gitt lagret cache på en person, forvent ikke funnet når en annen person henter samme prefiks`() {
-        val requestDTO = CacheRequestDTO(
-            nøkkelPrefiks = "mellomlagring_psb",
-            verdi = "verdi-123",
-            utløpsdato = ZonedDateTime.now().plusDays(3)
-        )
-
         restTemplate.postAndAssert<CacheRequestDTO, CacheResponseDTO>(
-            uri = CACHE_PATH,
-            request = HttpEntity(/* body = */ requestDTO, /* headers = */ hentToken().tokenTilHeader()),
+            request = RequestEntity
+                .post(CACHE_PATH)
+                .headers(hentToken().tokenTilHeader())
+                .body(
+                    CacheRequestDTO(
+                        nøkkelPrefiks = "mellomlagring_psb",
+                        verdi = "verdi-123",
+                        utløpsdato = ZonedDateTime.now().plusDays(3)
+                    )
+                ),
             expectedStatus = HttpStatus.CREATED
         )
 
-        restTemplate.getAndAssert<Any, Unit>(
-            uri = "$CACHE_PATH/mellomlagring_psb",
-            request = HttpEntity(/* headers = */  hentToken(fnr = "11111111111").tokenTilHeader()),
+        restTemplate.getAndAssert(
+            request = RequestEntity
+                .get("$CACHE_PATH/mellomlagring_psb")
+                .headers(hentToken(fnr = "11111111111").tokenTilHeader())
+                .build(),
             expectedStatus = HttpStatus.NOT_FOUND,
             expectedBody = Unit
         )
@@ -187,18 +220,17 @@ internal class IntegrationTest {
 
     @Test
     fun `Gitt oppdatering av ikke eksisterende cache, forvent feil`() {
-        val requestDTO = CacheRequestDTO(
-            nøkkelPrefiks = "ikke-eksisterende-cache",
-            verdi = "verdi-123",
-            utløpsdato = ZonedDateTime.now().plusDays(3)
-        )
-
         restTemplate.putAndAssert<CacheRequestDTO, Unit>(
-            uri = "$CACHE_PATH/mellomlagring_psb",
-            request = HttpEntity(
-                /* body = */ requestDTO.copy(verdi = "endret-verdi-456"),
-                /* headers = */hentToken().tokenTilHeader()
-            ),
+            request = RequestEntity
+                .put("$CACHE_PATH/mellomlagring_psb")
+                .headers(hentToken().tokenTilHeader())
+                .body(
+                    CacheRequestDTO(
+                        nøkkelPrefiks = "ikke-eksisterende-cache",
+                        verdi = "verdi-123",
+                        utløpsdato = ZonedDateTime.now().plusDays(3)
+                    )
+                ),
             expectedStatus = HttpStatus.NOT_FOUND,
             expectedBody = null
         )
@@ -206,10 +238,11 @@ internal class IntegrationTest {
 
     @Test
     fun `Gitt cache ikke eksisterer, forvent ikke-funnet feil`() {
-
-        restTemplate.getAndAssert<Any, Unit>(
-            uri = "$CACHE_PATH/ikke-eksisterende-cache",
-            request = HttpEntity(/* headers = */  hentToken().tokenTilHeader()),
+        restTemplate.getAndAssert(
+            request = RequestEntity
+                .get("$CACHE_PATH/ikke-eksisterende-cache")
+                .headers(hentToken().tokenTilHeader())
+                .build(),
             expectedStatus = HttpStatus.NOT_FOUND,
             expectedBody = Unit
         )
@@ -217,22 +250,26 @@ internal class IntegrationTest {
 
     @Test
     fun `gitt cache lagres, mens hentes på annen prefiks, forvent null`() {
-        val requestDTO = CacheRequestDTO(
-            nøkkelPrefiks = "mellomlagring_psb",
-            verdi = "verdi-123",
-            utløpsdato = ZonedDateTime.now().plusDays(3)
-        )
-
         restTemplate.postAndAssert<CacheRequestDTO, CacheResponseDTO>(
-            uri = CACHE_PATH,
-            request = HttpEntity(/* body = */ requestDTO, /* headers = */ hentToken().tokenTilHeader()),
+            request = RequestEntity
+                .post(CACHE_PATH)
+                .headers(hentToken().tokenTilHeader())
+                .body(
+                    CacheRequestDTO(
+                        nøkkelPrefiks = "mellomlagring_psb",
+                        verdi = "verdi-123",
+                        utløpsdato = ZonedDateTime.now().plusDays(3)
+                    )
+                ),
             expectedStatus = HttpStatus.CREATED
         )
 
         // samt, at hentet oppføring er lik den som ble lagret i db.
-        restTemplate.getAndAssert<Any, Unit>(
-            uri = "$CACHE_PATH/mellomlagring_pnn",
-            request = HttpEntity(/* headers = */  hentToken().tokenTilHeader()),
+        restTemplate.getAndAssert(
+            request = RequestEntity
+                .get("$CACHE_PATH/mellomlagring_pnn")
+                .headers(hentToken().tokenTilHeader())
+                .build(),
             expectedStatus = HttpStatus.NOT_FOUND,
             expectedBody = Unit
         )
