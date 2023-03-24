@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version "1.8.10"
     kotlin("plugin.spring") version "1.8.10"
     kotlin("plugin.jpa") version "1.8.10"
-    id("org.springframework.boot") version "3.0.4"
+    id("org.springframework.boot") version "3.0.5"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.sonarqube") version "4.0.0.2929"
     jacoco
@@ -21,7 +21,7 @@ configurations {
 }
 
 val logstashLogbackEncoderVersion by extra("7.2")
-val tokenSupportVersion by extra("3.0.4")
+val tokenSupportVersion by extra("3.0.8")
 val springCloudVersion by extra("2022.0.0-RC2")
 val retryVersion by extra("2.0.2")
 val postgresqlVersion by extra("42.5.1")
@@ -62,7 +62,7 @@ dependencies {
         exclude(module = "mockito-core")
     }
 
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.2")
 
     // Swagger (openapi 3)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
