@@ -7,7 +7,7 @@
   "minReplicas": "2",
   "maxReplicas": "2",
   "ingresses": [
-    "https://k9-brukerdialog-cache.dev.nav.no"
+    "https://k9-brukerdialog-cache.intern.dev.nav.no"
   ],
   "externalHosts": [
     "login.microsoftonline.com"
@@ -27,7 +27,6 @@
   "env": {
     "SERVER_PORT": "8080",
     "SPRING_APPLICATION_NAME": "k9-brukerdialog-cache",
-    "APPLICATION_INGRESS": "https://k9-brukerdialog-cache.dev.nav.no",
     "SPRING_PROFILES_ACTIVE": "dev-gcp",
     "SWAGGER_ENABLED": "true"
   },
