@@ -24,7 +24,6 @@
   "env": {
     "SERVER_PORT": "8080",
     "SPRING_APPLICATION_NAME": "k9-brukerdialog-cache",
-    "APPLICATION_INGRESS": "https://k9-brukerdialog-cache.nav.no",
     "SPRING_PROFILES_ACTIVE": "prod-gcp"
   },
   "slack-channel": "sif-alerts",
