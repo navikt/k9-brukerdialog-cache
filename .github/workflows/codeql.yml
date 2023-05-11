@@ -19,3 +19,4 @@ jobs:
     with:
       language: "java"
       package-command: './gradlew clean build -x test'
+      branch: "main"
