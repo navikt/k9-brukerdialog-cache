@@ -40,7 +40,7 @@ jobs:
     secrets: inherit
     with:
       readertoken: false
-      package-command: './gradlew check build -x test --scan'
+      package-command: './gradlew clean build -x test'
       branch: main
 
   build:
@@ -53,7 +53,7 @@ jobs:
     with:
       team: dusseldorf
       readertoken: false
-      buildcommand: './gradlew clean build -x test'
+      buildcommand: './gradlew clean build -x test --scan'
 
   trivy:
     needs: [ build ]
