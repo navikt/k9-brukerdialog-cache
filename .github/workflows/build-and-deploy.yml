@@ -40,7 +40,7 @@ jobs:
     secrets: inherit
     with:
       readertoken: false
-      package-command: './gradlew check build -x test'
+      package-command: './gradlew check build -x test --scan'
       branch: main
 
   build:
