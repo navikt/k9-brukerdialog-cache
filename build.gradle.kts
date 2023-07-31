@@ -147,5 +147,3 @@ sonarqube {
         property("sonar.sourceEncoding", "UTF-8")
     }
 }
-
-
