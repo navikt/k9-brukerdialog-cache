@@ -53,7 +53,7 @@ jobs:
     with:
       team: dusseldorf
       readertoken: false
-      buildcommand: './gradlew clean build -x test --scan'
+      buildcommand: './gradlew clean build -x test'
 
   trivy:
     needs: [ build ]
