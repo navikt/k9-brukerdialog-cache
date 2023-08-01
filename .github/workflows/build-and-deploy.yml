@@ -53,7 +53,7 @@ jobs:
     with:
       team: dusseldorf
       readertoken: false
-      buildcommand: './gradlew clean build -x test'
+      buildcommand: '--configuration-cache build -x test'
 
   trivy:
     needs: [ build ]
