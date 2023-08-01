@@ -7,7 +7,6 @@ plugins {
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.sonarqube") version "4.0.0.2929"
-    id("com.gradle.enterprise") version("3.13.4")
     jacoco
 }
 
@@ -15,15 +14,7 @@ group = "no.nav"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-gradleEnterprise {
-    if (System.getenv("CI") != null) {
-        buildScan {
-            publishAlways()
-            termsOfServiceUrl = "https://gradle.com/terms-of-service"
-            termsOfServiceAgree = "yes"
-        }
-    }
-}
+
 
 configurations {
     compileOnly {
