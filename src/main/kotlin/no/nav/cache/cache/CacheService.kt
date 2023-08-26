@@ -2,6 +2,7 @@ package no.nav.cache.cache
 
 import no.nav.cache.util.ServletUtils
 import no.nav.cache.util.TokenUtils.personIdentifikator
+import no.nav.cache.utkast.Utkast
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -15,6 +16,7 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
+import java.util.UUID
 
 @Service
 class CacheService(
@@ -33,6 +35,28 @@ class CacheService(
         if (repo.existsById(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)))
             throw CacheConflictException(cacheEntryDTO.nøkkelPrefiks)
 
+        // TODO: Opprett og publiser utkast
+        val builder = Utkast.Builder()
+            .utkastId(UUID.randomUUID().toString())
+            .ident(fnr)
+            .origin("k9-brukerdialog-cache")
+
+        when(cacheEntryDTO.ytelse) {
+            Ytelse.PLEIEPENGER_SYKT_BARN -> TODO()
+            Ytelse.ENDRINGSMELDING_PLEIEPENGER_SYKT_BARN -> TODO()
+            Ytelse.PLEIEPENGER_LIVETS_SLUTTFASE -> TODO()
+            Ytelse.OMSORGSPENGER_UTVIDET_RETT -> TODO()
+            Ytelse.OMSORGSPENGER_MIDLERTIDIG_ALENE -> TODO()
+            Ytelse.OMSORGSPENGER_UTBETALING_ARBEIDSTAKER -> TODO()
+            Ytelse.OMSORGSDAGER_ALENEOMSORG -> TODO()
+            Ytelse.OMSORGSPENGER_UTBETALING_SNF -> TODO()
+            Ytelse.ETTERSENDING -> TODO()
+            Ytelse.ETTERSENDING_PLEIEPENGER_SYKT_BARN -> TODO()
+            Ytelse.ETTERSENDING_PLEIEPENGER_LIVETS_SLUTTFASE -> TODO()
+            Ytelse.ETTERSENDING_OMP -> TODO()
+            null -> TODO()
+        }
+
         return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
     }
 
@@ -45,9 +69,7 @@ class CacheService(
     @Throws(CacheNotFoundException::class)
     fun hent(nøkkelPrefiks: String): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
-        return repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr))?.let {
-            it.somCacheResponseDTO(fnr)
-        } ?: throw CacheNotFoundException(nøkkelPrefiks)
+        return repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr))?.somCacheResponseDTO(fnr) ?: throw CacheNotFoundException(nøkkelPrefiks)
     }
 
     @Throws(FailedCacheDeletionException::class)
@@ -60,7 +82,18 @@ class CacheService(
     @Scheduled(fixedRateString = "#{'\${no.nav.scheduled.utgått-cache}'}")
     fun slettUtgåtteCache() {
         logger.info("Sletter utgåtte cache...")
-        val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsBefore(ZonedDateTime.now(UTC))
+        val now = ZonedDateTime.now(UTC)
+
+        /*repo.findAllByUtløpsdatoIsBefore(now)
+            .mapNotNull { it.utkastId }
+            .forEach { utkastId ->
+                val utkast = UtkastJsonBuilder()
+                    .withUtkastId(utkastId)
+                    .delete()
+            }*/
+
+
+        val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsBefore(now)
         logger.info("Slettet {} utgåtte cache.", antallSlettedeCache)
     }
 
@@ -80,6 +113,7 @@ class CacheService(
         return CacheEntryDAO(
             nøkkel = genererNøkkel(nøkkelPrefiks, fnr),
             verdi = krypto.encrypt(verdi),
+            ytelse = Ytelse.PLEIEPENGER_SYKT_BARN,
             utløpsdato = utløpsdato,
             opprettet = opprettet ?: ZonedDateTime.now(UTC),
             endret = endret
@@ -87,7 +121,8 @@ class CacheService(
     }
 }
 
-class CacheNotFoundException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.NOT_FOUND, asProblemDetail(nøkkelPrefiks), null) {
+class CacheNotFoundException(nøkkelPrefiks: String) :
+    ErrorResponseException(HttpStatus.NOT_FOUND, asProblemDetail(nøkkelPrefiks), null) {
     private companion object {
         private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
             val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
@@ -103,7 +138,8 @@ class CacheNotFoundException(nøkkelPrefiks: String) : ErrorResponseException(Ht
 }
 
 
-class FailedCacheDeletionException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, asProblemDetail(nøkkelPrefiks), null) {
+class FailedCacheDeletionException(nøkkelPrefiks: String) :
+    ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, asProblemDetail(nøkkelPrefiks), null) {
     private companion object {
         private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
             val problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -117,7 +153,9 @@ class FailedCacheDeletionException(nøkkelPrefiks: String) : ErrorResponseExcept
         }
     }
 }
-class CacheConflictException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.CONFLICT, asProblemDetail(nøkkelPrefiks), null) {
+
+class CacheConflictException(nøkkelPrefiks: String) :
+    ErrorResponseException(HttpStatus.CONFLICT, asProblemDetail(nøkkelPrefiks), null) {
     private companion object {
         private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
             val problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT)

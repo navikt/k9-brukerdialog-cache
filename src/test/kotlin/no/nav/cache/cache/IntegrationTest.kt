@@ -201,6 +201,7 @@ internal class IntegrationTest {
                 .body(
                     CacheRequestDTO(
                         nøkkelPrefiks = "mellomlagring_psb",
+                        ytelse = Ytelse.PLEIEPENGER_SYKT_BARN,
                         verdi = "verdi-123",
                         utløpsdato = ZonedDateTime.now().plusDays(3)
                     )
@@ -228,6 +229,7 @@ internal class IntegrationTest {
                     CacheRequestDTO(
                         nøkkelPrefiks = "ikke-eksisterende-cache",
                         verdi = "verdi-123",
+                        ytelse = Ytelse.PLEIEPENGER_SYKT_BARN,
                         utløpsdato = ZonedDateTime.now().plusDays(3)
                     )
                 ),

@@ -42,12 +42,16 @@ ext["testcontainersVersion"] = testcontainersVersion
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.spring.io/milestone") }
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
     implementation("org.yaml:snakeyaml:2.1") {
         because("https://github.com/navikt/k9-brukerdialog-cache/security/dependabot/1")
     }
+
 
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
     testImplementation("no.nav.security:token-validation-spring-test:$tokenSupportVersion")

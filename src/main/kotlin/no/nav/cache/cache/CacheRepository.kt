@@ -10,4 +10,5 @@ interface CacheRepository : JpaRepository<CacheEntryDAO, String> {
     fun findByNøkkel(nøkkel: String): CacheEntryDAO?
 
     fun deleteAllByUtløpsdatoIsBefore(dato: ZonedDateTime): Int
+    fun findAllByUtløpsdatoIsBefore(dato: ZonedDateTime): List<CacheEntryDAO>
 }
