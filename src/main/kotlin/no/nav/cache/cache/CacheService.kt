@@ -2,7 +2,7 @@ package no.nav.cache.cache
 
 import no.nav.cache.util.ServletUtils
 import no.nav.cache.util.TokenUtils.personIdentifikator
-import no.nav.cache.utkast.Utkast
+import no.nav.cache.utkast.MineSiderProperties
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -16,13 +16,13 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
-import java.util.UUID
 
 @Service
 class CacheService(
     private val repo: CacheRepository,
     private val tokenValidationContextHolder: SpringTokenValidationContextHolder,
     @Value("\${krypto.passphrase}") private val kryptoPassphrase: String,
+    private val mineSiderProperties: MineSiderProperties,
 ) {
 
     companion object {
@@ -36,26 +36,7 @@ class CacheService(
             throw CacheConflictException(cacheEntryDTO.nøkkelPrefiks)
 
         // TODO: Opprett og publiser utkast
-        val builder = Utkast.Builder()
-            .utkastId(UUID.randomUUID().toString())
-            .ident(fnr)
-            .origin("k9-brukerdialog-cache")
-
-        when(cacheEntryDTO.ytelse) {
-            Ytelse.PLEIEPENGER_SYKT_BARN -> TODO()
-            Ytelse.ENDRINGSMELDING_PLEIEPENGER_SYKT_BARN -> TODO()
-            Ytelse.PLEIEPENGER_LIVETS_SLUTTFASE -> TODO()
-            Ytelse.OMSORGSPENGER_UTVIDET_RETT -> TODO()
-            Ytelse.OMSORGSPENGER_MIDLERTIDIG_ALENE -> TODO()
-            Ytelse.OMSORGSPENGER_UTBETALING_ARBEIDSTAKER -> TODO()
-            Ytelse.OMSORGSDAGER_ALENEOMSORG -> TODO()
-            Ytelse.OMSORGSPENGER_UTBETALING_SNF -> TODO()
-            Ytelse.ETTERSENDING -> TODO()
-            Ytelse.ETTERSENDING_PLEIEPENGER_SYKT_BARN -> TODO()
-            Ytelse.ETTERSENDING_PLEIEPENGER_LIVETS_SLUTTFASE -> TODO()
-            Ytelse.ETTERSENDING_OMP -> TODO()
-            null -> TODO()
-        }
+        val utkast = cacheEntryDTO.ytelse?.let { mineSiderProperties.byggUtkast(fnr, it) }
 
         return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
     }
@@ -69,7 +50,8 @@ class CacheService(
     @Throws(CacheNotFoundException::class)
     fun hent(nøkkelPrefiks: String): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
-        return repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr))?.somCacheResponseDTO(fnr) ?: throw CacheNotFoundException(nøkkelPrefiks)
+        return repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr))?.somCacheResponseDTO(fnr)
+            ?: throw CacheNotFoundException(nøkkelPrefiks)
     }
 
     @Throws(FailedCacheDeletionException::class)

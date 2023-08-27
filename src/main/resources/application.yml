@@ -9,6 +9,44 @@ no.nav:
   scheduled:
     utgått-cache: 300000 # 5 minutter
 
+  mine-sider:
+    psb-soknad:
+      link: ${PSB_SOKNAD_URL}
+      tittel: ${PSB_SOKNAD_TITTEL}
+    psb-endringsmelding:
+      link: ${PSB_ENDRINGSMELDING_URL}
+      tittel: ${PSB_ENDRINGSMELDING_TITTEL}
+    pleiepenger-livets-slutt:
+      link: ${PLEIEPENGER_LIVETS_SLUTT_URL}
+      tittel: ${PLEIEPENGER_LIVETS_SLUTT_TITTEL}
+    omsorgspenger-utvidet-rett:
+      link: ${OMSORGSPENGER_UTVIDET_RETT_URL}
+      tittel: ${OMSORGSPENGER_UTVIDET_RETT_TITTEL}
+    omsorgspenger-midlertidig-alene:
+      link: ${OMSORGSPENGER_MIDLERTIDIG_ALENE_URL}
+      tittel: ${OMSORGSPENGER_MIDLERTIDIG_ALENE_TITTEL}
+    omsorgspenger-utbetaling-arbeidstaker:
+      link: ${OMSORGSPENGER_UTBETALING_ARBEIDSTAKER_URL}
+      tittel: ${OMSORGSPENGER_UTBETALING_ARBEIDSTAKER_TITTEL}
+    omsorgsdager-aleneomsorg:
+      link: ${OMSORGSDAGER_ALENEOMSORG_URL}
+      tittel: ${OMSORGSDAGER_ALENEOMSORG_TITTEL}
+    omsorgspenger-utbetaling-snf:
+      link: ${OMSORGSPENGER_UTBETALING_SNF_URL}
+      tittel: ${OMSORGSPENGER_UTBETALING_SNF_TITTEL}
+    ettersending:
+      link: ${ETTERSENDING_URL}
+      tittel: ${ETTERSENDING_TITTEL}
+    ettersending-pleiepenger-sykt-barn:
+      link: ${ETTERSENDING_PLEIEPENGER_SYKT_BARN_URL}
+      tittel: ${ETTERSENDING_PLEIEPENGER_SYKT_BARN_TITTEL}
+    ettersending-pleiepenger-livets-slutt:
+      link: ${ETTERSENDING_PLEIEPENGER_LIVETS_SLUTT_URL}
+      tittel: ${ETTERSENDING_PLEIEPENGER_LIVETS_SLUTT_TITTEL}
+    ettersending-omp:
+      link: ${ETTERSENDING_OMP_URL}
+      tittel: ${ETTERSENDING_OMP_TITTEL}
+
 management:
   endpoints:
     web:
