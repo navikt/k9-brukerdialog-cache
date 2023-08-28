@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.cache.utkast.UtkastValidator.validateIdent
 import no.nav.cache.utkast.UtkastValidator.validateLink
 import no.nav.cache.utkast.UtkastValidator.validateUtkastId
+import org.json.JSONObject
 
 data class Utkast private constructor(
     var utkastId: String? = null,
@@ -35,7 +36,7 @@ data class Utkast private constructor(
             "metrics" to metricsObject
         )
 
-        return mapper.writeValueAsString(fields)
+        return mapper.writeValueAsString(JSONObject(fields))
     }
 
     private fun utkastMapper() = ObjectMapper().registerKotlinModule().apply {
