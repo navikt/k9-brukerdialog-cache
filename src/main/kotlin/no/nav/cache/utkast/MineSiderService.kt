@@ -27,6 +27,7 @@ class MineSiderService(
                 throw ex
             }
             .thenAccept { result: SendResult<String, String> ->
+                log.info("DEBUG: Utkast: {}", result.producerRecord.value()) // TODO: Fjern før produksjon
                 log.info(
                     "Sendte melding med offset {} på {}",
                     result.recordMetadata.offset(),
