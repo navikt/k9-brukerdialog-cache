@@ -2,6 +2,8 @@ package no.nav.cache.utils
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import org.json.JSONObject
+import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.RequestEntity
@@ -33,7 +35,7 @@ object RestTemplateUtils {
         val response = exchange(request, ResponseBody::class.java)
         assertThat(response.statusCode).isEqualTo(expectedStatus)
         val body = response.body
-        if (expectedBody !is Unit) assertThat(body).isEqualTo(expectedBody)
+        if (expectedBody !is Unit) JSONAssert.assertEquals(JSONObject(expectedBody), JSONObject(body), false)
         return body
     }
 

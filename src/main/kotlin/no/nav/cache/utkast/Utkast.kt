@@ -8,7 +8,7 @@ import no.nav.cache.utkast.UtkastValidator.validateLink
 import no.nav.cache.utkast.UtkastValidator.validateUtkastId
 
 data class Utkast private constructor(
-    private var utkastId: String? = null,
+    var utkastId: String? = null,
     private var ident: String? = null,
     private var link: String? = null,
     private var eventName: EventName? = null,

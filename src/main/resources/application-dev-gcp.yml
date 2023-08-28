@@ -9,3 +9,14 @@ management:
 spring:
   mvc:
     log-request-details: true
+
+  kafka:
+    security:
+      protocol: SSL
+    ssl:
+      trust-store-location: file:${KAFKA_TRUSTSTORE_PATH}
+      trust-store-password: ${KAFKA_CREDSTORE_PASSWORD}
+      trust-store-type: JKS
+      key-store-location: file:${KAFKA_KEYSTORE_PATH}
+      key-store-password: ${KAFKA_CREDSTORE_PASSWORD}
+      key-store-type: PKCS12

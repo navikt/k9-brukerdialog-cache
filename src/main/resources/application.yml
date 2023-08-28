@@ -77,6 +77,13 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    producer:
+      client-id: ${HOSTNAME}
+      transaction-id-prefix: .tx-
+      retries: 3
+
 springdoc:
   api-docs:
     enabled: ${SWAGGER_ENABLED:false}

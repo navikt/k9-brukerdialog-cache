@@ -2,7 +2,8 @@ package no.nav.cache.cache
 
 import no.nav.cache.util.ServletUtils
 import no.nav.cache.util.TokenUtils.personIdentifikator
-import no.nav.cache.utkast.MineSiderProperties
+import no.nav.cache.utkast.Utkast
+import no.nav.cache.utkast.UtkastService
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.ErrorResponseException
 import java.net.URI
 import java.net.URLDecoder
@@ -22,7 +24,7 @@ class CacheService(
     private val repo: CacheRepository,
     private val tokenValidationContextHolder: SpringTokenValidationContextHolder,
     @Value("\${krypto.passphrase}") private val kryptoPassphrase: String,
-    private val mineSiderProperties: MineSiderProperties,
+    private val utkastService: UtkastService
 ) {
 
     companion object {
@@ -30,15 +32,17 @@ class CacheService(
         private fun genererNøkkel(prefix: String, fnr: String) = "${prefix}_$fnr"
     }
 
-    fun lagre(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
+    @Transactional("transactionManager")
+    fun lagre(cacheRequestDTO: CacheRequestDTO): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
-        if (repo.existsById(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)))
-            throw CacheConflictException(cacheEntryDTO.nøkkelPrefiks)
+        if (repo.existsById(genererNøkkel(cacheRequestDTO.nøkkelPrefiks, fnr)))
+            throw CacheConflictException(cacheRequestDTO.nøkkelPrefiks)
 
-        // TODO: Opprett og publiser utkast
-        val utkast = cacheEntryDTO.ytelse?.let { mineSiderProperties.byggUtkast(fnr, it) }
+        val utkast = cacheRequestDTO.ytelse?.let {
+            utkastService.opprettUtkast(fnr, it)
+        }
 
-        return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
+        return repo.save(cacheRequestDTO.somCacheEntryDAO(fnr, utkast)).somCacheResponseDTO(fnr)
     }
 
     fun oppdater(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
@@ -54,26 +58,33 @@ class CacheService(
             ?: throw CacheNotFoundException(nøkkelPrefiks)
     }
 
+    @Transactional("transactionManager")
     @Throws(FailedCacheDeletionException::class)
     fun slett(nøkkelPrefiks: String) {
-        val verdi = hent(nøkkelPrefiks)
-        repo.deleteById(verdi.nøkkel)
-        if (repo.existsById(verdi.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
+        val fnr = tokenValidationContextHolder.personIdentifikator()
+        val cacheEntryDAO =
+            repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr)) ?: throw CacheNotFoundException(nøkkelPrefiks)
+
+        repo.deleteById(cacheEntryDAO.nøkkel)
+        if (repo.existsById(cacheEntryDAO.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
+
+        if (cacheEntryDAO.utkastId != null && cacheEntryDAO.ytelse != null) {
+            utkastService.slettUtkast(cacheEntryDAO.ytelse, cacheEntryDAO.utkastId)
+        }
     }
 
+    @Transactional("transactionManager")
     @Scheduled(fixedRateString = "#{'\${no.nav.scheduled.utgått-cache}'}")
     fun slettUtgåtteCache() {
         logger.info("Sletter utgåtte cache...")
         val now = ZonedDateTime.now(UTC)
 
-        /*repo.findAllByUtløpsdatoIsBefore(now)
-            .mapNotNull { it.utkastId }
-            .forEach { utkastId ->
-                val utkast = UtkastJsonBuilder()
-                    .withUtkastId(utkastId)
-                    .delete()
-            }*/
-
+        repo.findAllByUtløpsdatoIsBefore(now)
+            .filterNot { it.utkastId == null }
+            .filterNot { it.ytelse == null }
+            .forEach { cacheEntryDAO ->
+                utkastService.slettUtkast(cacheEntryDAO.ytelse!!, cacheEntryDAO.utkastId!!)
+            }
 
         val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsBefore(now)
         logger.info("Slettet {} utgåtte cache.", antallSlettedeCache)
@@ -90,12 +101,13 @@ class CacheService(
         )
     }
 
-    private fun CacheRequestDTO.somCacheEntryDAO(fnr: String): CacheEntryDAO {
+    private fun CacheRequestDTO.somCacheEntryDAO(fnr: String, utkast: Utkast? = null): CacheEntryDAO {
         val krypto = Krypto(passphrase = kryptoPassphrase, fnr = fnr)
         return CacheEntryDAO(
             nøkkel = genererNøkkel(nøkkelPrefiks, fnr),
             verdi = krypto.encrypt(verdi),
-            ytelse = Ytelse.PLEIEPENGER_SYKT_BARN,
+            ytelse = ytelse,
+            utkastId = utkast?.utkastId,
             utløpsdato = utløpsdato,
             opprettet = opprettet ?: ZonedDateTime.now(UTC),
             endret = endret

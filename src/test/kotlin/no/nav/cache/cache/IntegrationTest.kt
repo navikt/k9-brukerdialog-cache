@@ -7,14 +7,20 @@ import assertk.assertions.isNotNull
 import com.nimbusds.jwt.SignedJWT
 import no.nav.cache.K9BrukerdialogCacheApplication
 import no.nav.cache.cache.CacheController.Endpoints.CACHE_PATH
+import no.nav.cache.kafka.Topics
 import no.nav.cache.utils.RestTemplateUtils.deleteAndAssert
 import no.nav.cache.utils.RestTemplateUtils.getAndAssert
 import no.nav.cache.utils.RestTemplateUtils.postAndAssert
 import no.nav.cache.utils.RestTemplateUtils.putAndAssert
+import no.nav.cache.utils.hentMelding
 import no.nav.cache.utils.hentToken
+import no.nav.cache.utils.opprettKafkaConsumer
+import no.nav.cache.utils.opprettKafkaProducer
 import no.nav.cache.utils.tokenTilHeader
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
+import org.apache.kafka.clients.consumer.Consumer
+import org.apache.kafka.clients.producer.Producer
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -27,6 +33,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.http.RequestEntity
+import org.springframework.kafka.test.EmbeddedKafkaBroker
+import org.springframework.kafka.test.context.EmbeddedKafka
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
@@ -34,6 +43,12 @@ import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 
 
+@EmbeddedKafka( // Setter opp og tilgjengligjør embeded kafka broker
+    count = 3,
+    bootstrapServersProperty = "kafka-servers", // Setter bootstrap-servers for consumer og producer.
+    topics = [Topics.K9_DITTNAV_VARSEL_UTKAST]
+)
+@DirtiesContext
 @SpringBootTest(
     classes = [K9BrukerdialogCacheApplication::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -53,10 +68,21 @@ internal class IntegrationTest {
     @Autowired
     private lateinit var mockOAuth2Server: MockOAuth2Server
 
+    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    private lateinit var embeddedKafkaBroker: EmbeddedKafkaBroker // Broker som brukes til å konfigurere opp en kafka producer.
+
+    lateinit var producer: Producer<String, Any> // Kafka producer som brukes til å legge på kafka meldinger.
+    lateinit var utkastConsumer: Consumer<String, String> // Kafka consumer som brukes til å lese utkaster.
+
+
     @BeforeEach
     internal fun setUp() {
         assertNotNull(restTemplate)
         cacheRepository.deleteAll()
+        producer = embeddedKafkaBroker.opprettKafkaProducer()
+        utkastConsumer =
+            embeddedKafkaBroker.opprettKafkaConsumer(groupId = "utkast-consumer", topicName = Topics.K9_DITTNAV_VARSEL_UTKAST)
     }
 
     @Test
@@ -68,6 +94,7 @@ internal class IntegrationTest {
                 CacheRequestDTO(
                     nøkkelPrefiks = "mellomlagring_psb",
                     verdi = "verdi-123",
+                    ytelse = Ytelse.PLEIEPENGER_SYKT_BARN,
                     utløpsdato = ZonedDateTime.now().plusDays(3)
                 )
             )
@@ -79,6 +106,7 @@ internal class IntegrationTest {
         val cacheInDB = cacheRepository.findByNøkkel(cacheResponseDTO.nøkkel)
         assertThat(cacheInDB).isNotNull()
         assertThat(cacheInDB!!.verdi).isNotEqualTo(postRequest.body!!.verdi)
+        assertThat(cacheInDB.utkastId).isNotNull()
 
         restTemplate.getAndAssert(
             request = RequestEntity
@@ -88,6 +116,9 @@ internal class IntegrationTest {
             expectedStatus = HttpStatus.OK,
             expectedBody = cacheResponseDTO
         )
+
+        val konsumertUtkast = utkastConsumer.hentMelding(Topics.K9_DITTNAV_VARSEL_UTKAST) { it == cacheInDB.utkastId }?.value()
+        assertThat(konsumertUtkast).isNotNull()
     }
 
     @Test

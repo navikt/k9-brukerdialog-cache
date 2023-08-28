@@ -3,9 +3,11 @@ package no.nav.cache.utkast
 import no.nav.cache.cache.Ytelse
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.ConstructorBinding
+import org.springframework.validation.annotation.Validated
 import java.util.*
 
 @ConfigurationProperties(prefix = "no.nav.mine-sider")
+@Validated
 data class MineSiderProperties @ConstructorBinding constructor(
     val psbSoknad: UtkastProperties,
     val psbEndringsmelding: UtkastProperties,
@@ -18,9 +20,9 @@ data class MineSiderProperties @ConstructorBinding constructor(
     val ettersending: UtkastProperties,
     val ettersendingPleiepengerSyktBarn: UtkastProperties,
     val ettersendingPleiepengerLivetsSlutt: UtkastProperties,
-    val ettersendingOmp: UtkastProperties,
+    val ettersendingOmp: UtkastProperties
 ) {
-    fun byggUtkast(ident: String, ytelse: Ytelse): Utkast {
+    fun opprettUtkast(ident: String, ytelse: Ytelse): Utkast {
         val builder = Utkast.Builder()
             .utkastId(UUID.randomUUID().toString())
             .ident(ident)

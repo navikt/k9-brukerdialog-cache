@@ -9,6 +9,57 @@ no.nav:
   scheduled:
     utgått-cache: 1000 # 1 sekund
 
+  mine-sider:
+    psb-soknad:
+      link: https://pleiepengesoknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/pleiepenger
+      tittel: Søknad om pleiepenger for sykt barn
+
+    psb-endringsmelding:
+      link: https://endringsmelding-pleiepenger.intern.dev.nav.no
+      tittel: Endringsmelding pleiepenger - sykt barn
+
+    pleiepenger-livets-slutt:
+      link: https://pleiepenger-i-livets-sluttfase.intern.dev.nav.no
+      tittel: Søknad om pleiepenger ved pleie i hjemmet av nærstående i livets sluttfase
+
+    omsorgspenger-utvidet-rett:
+      link: https://omsorgspengesoknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/omsorgspenger/soknad
+      tittel: Søknad om utvidet rett pga. kronisk sykt eller funksjonshemmet barn
+
+    omsorgspenger-midlertidig-alene:
+      link: https://ekstra-omsorgsdager-andre-forelder-ikke-tilsyn.intern.dev.nav.no
+      tittel: Søknad om ekstra omsorgsdager når den andre forelderen ikke kan ha tilsyn med barn
+
+    omsorgspenger-utbetaling-arbeidstaker:
+      link: https://omsorgspengerutbetaling-arbeidstaker-soknad.intern.dev.nav.no
+      tittel: Søknad om utbetaling av omsorgspenger for arbeidstakere
+
+    omsorgspenger-utbetaling-snf:
+      link: https://omsorgspengerutbetaling-soknad.intern.dev.nav.no
+      tittel: Søknad om utbetaling av omsorgspenger - Selvstendig Næringsdrivende og Frilans
+
+    omsorgsdager-aleneomsorg:
+      link: https://omsorgsdager-aleneomsorg-dialog.intern.dev.nav.no
+      tittel: Registrering av aleneomsorg for omsorgsdager
+
+    ettersending:
+      link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending
+      tittel: Melding om Ettersending
+
+    ettersending-pleiepenger-sykt-barn:
+      link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger
+      tittel: Melding om Ettersending - Pleiepenger sykt barn
+
+    ettersending-pleiepenger-livets-slutt:
+      link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger-livets-sluttfase
+      tittel: Melding om Ettersending - Pleiepenger livets sluttfase
+
+    ettersending-omp:
+      link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending/omsorgspenger
+      tittel: Melding om Ettersending - Omsorgspenger
+
+kafka-servers: localhost:9092 # placeholder
+
 spring:
   mvc:
     log-request-details: true
@@ -19,12 +70,20 @@ spring:
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQL12Dialect
 
+  kafka:
+    bootstrap-servers: ${kafka-servers}
+    producer:
+      client-id: k9-brukerdialog-cache
+
 logging:
   level:
     root: TRACE
     state:
       change:
         logger: ERROR
+    org:
+      springframework:
+        transaction: trace
 
 krypto:
   passphrase: hemmelig+passord
