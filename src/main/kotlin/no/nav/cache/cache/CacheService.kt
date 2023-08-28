@@ -39,7 +39,8 @@ class CacheService(
             throw CacheConflictException(cacheRequestDTO.nøkkelPrefiks)
 
         val utkast = cacheRequestDTO.ytelse?.let {
-            utkastService.opprettUtkast(fnr, it)
+            //utkastService.opprettUtkast(fnr, it)
+            null
         }
 
         return repo.save(cacheRequestDTO.somCacheEntryDAO(fnr, utkast)).somCacheResponseDTO(fnr)
@@ -69,7 +70,7 @@ class CacheService(
         if (repo.existsById(cacheEntryDAO.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
 
         if (cacheEntryDAO.utkastId != null && cacheEntryDAO.ytelse != null) {
-            utkastService.slettUtkast(cacheEntryDAO.ytelse, cacheEntryDAO.utkastId)
+            //utkastService.slettUtkast(cacheEntryDAO.ytelse, cacheEntryDAO.utkastId)
         }
     }
 

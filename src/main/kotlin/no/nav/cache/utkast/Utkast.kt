@@ -36,7 +36,7 @@ data class Utkast private constructor(
             "metrics" to metricsObject
         )
 
-        return mapper.writeValueAsString(JSONObject(fields))
+        return mapper.writeValueAsString(fields)
     }
 
     private fun utkastMapper() = ObjectMapper().registerKotlinModule().apply {
