@@ -4,6 +4,7 @@ import no.nav.cache.cache.Ytelse
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.ConstructorBinding
 import org.springframework.validation.annotation.Validated
+import java.net.URL
 import java.util.*
 
 @ConfigurationProperties(prefix = "no.nav.mine-sider")
@@ -31,51 +32,51 @@ data class MineSiderProperties @ConstructorBinding constructor(
         when (ytelse) {
             Ytelse.PLEIEPENGER_SYKT_BARN -> builder
                 .defaultTittel(psbSoknad.tittel)
-                .link(psbSoknad.link)
+                .link(psbSoknad.link.toString())
 
             Ytelse.ENDRINGSMELDING_PLEIEPENGER_SYKT_BARN -> builder
                 .defaultTittel(psbEndringsmelding.tittel)
-                .link(psbEndringsmelding.link)
+                .link(psbEndringsmelding.link.toString())
 
             Ytelse.PLEIEPENGER_LIVETS_SLUTTFASE -> builder
                 .defaultTittel(pleiepengerLivetsSlutt.tittel)
-                .link(pleiepengerLivetsSlutt.link)
+                .link(pleiepengerLivetsSlutt.link.toString())
 
             Ytelse.OMSORGSPENGER_UTVIDET_RETT -> builder
                 .defaultTittel(omsorgspengerUtvidetRett.tittel)
-                .link(omsorgspengerUtvidetRett.link)
+                .link(omsorgspengerUtvidetRett.link.toString())
 
             Ytelse.OMSORGSPENGER_MIDLERTIDIG_ALENE -> builder
                 .defaultTittel(omsorgspengerMidlertidigAlene.tittel)
-                .link(omsorgspengerMidlertidigAlene.link)
+                .link(omsorgspengerMidlertidigAlene.link.toString())
 
             Ytelse.OMSORGSPENGER_UTBETALING_ARBEIDSTAKER -> builder
                 .defaultTittel(omsorgspengerUtbetalingArbeidstaker.tittel)
-                .link(omsorgspengerUtbetalingArbeidstaker.link)
+                .link(omsorgspengerUtbetalingArbeidstaker.link.toString())
 
             Ytelse.OMSORGSDAGER_ALENEOMSORG -> builder
                 .defaultTittel(omsorgsdagerAleneomsorg.tittel)
-                .link(omsorgsdagerAleneomsorg.link)
+                .link(omsorgsdagerAleneomsorg.link.toString())
 
             Ytelse.OMSORGSPENGER_UTBETALING_SNF -> builder
                 .defaultTittel(omsorgspengerUtbetalingSnf.tittel)
-                .link(omsorgspengerUtbetalingSnf.link)
+                .link(omsorgspengerUtbetalingSnf.link.toString())
 
             Ytelse.ETTERSENDING -> builder
                 .defaultTittel(ettersending.tittel)
-                .link(ettersending.link)
+                .link(ettersending.link.toString())
 
             Ytelse.ETTERSENDING_PLEIEPENGER_SYKT_BARN -> builder
                 .defaultTittel(ettersendingPleiepengerSyktBarn.tittel)
-                .link(ettersendingPleiepengerSyktBarn.link)
+                .link(ettersendingPleiepengerSyktBarn.link.toString())
 
             Ytelse.ETTERSENDING_PLEIEPENGER_LIVETS_SLUTTFASE -> builder
                 .defaultTittel(ettersendingPleiepengerLivetsSlutt.tittel)
-                .link(ettersendingPleiepengerLivetsSlutt.link)
+                .link(ettersendingPleiepengerLivetsSlutt.link.toString())
 
             Ytelse.ETTERSENDING_OMP -> builder
                 .defaultTittel(ettersendingOmp.tittel)
-                .link(ettersendingOmp.link)
+                .link(ettersendingOmp.link.toString())
         }
 
         return builder.create()
@@ -83,6 +84,6 @@ data class MineSiderProperties @ConstructorBinding constructor(
 }
 
 data class UtkastProperties(
-    val link: String,
+    val link: URL,
     val tittel: String,
 )

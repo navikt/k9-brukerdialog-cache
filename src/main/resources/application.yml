@@ -11,41 +11,52 @@ no.nav:
 
   mine-sider:
     psb-soknad:
-      link: ${PSB_SOKNAD_URL}
-      tittel: ${PSB_SOKNAD_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/pleiepenger
+      tittel: Søknad om pleiepenger for sykt barn
+
     psb-endringsmelding:
-      link: ${PSB_ENDRINGSMELDING_URL}
-      tittel: ${PSB_ENDRINGSMELDING_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/endringsmelding-pleiepenger
+      tittel: Endringsmelding pleiepenger - sykt barn
+
     pleiepenger-livets-slutt:
-      link: ${PLEIEPENGER_LIVETS_SLUTT_URL}
-      tittel: ${PLEIEPENGER_LIVETS_SLUTT_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/pleiepenger-i-livets-sluttfase
+      tittel: Søknad om pleiepenger ved pleie i hjemmet av nærstående i livets sluttfase
+
     omsorgspenger-utvidet-rett:
-      link: ${OMSORGSPENGER_UTVIDET_RETT_URL}
-      tittel: ${OMSORGSPENGER_UTVIDET_RETT_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspenger
+      tittel: Søknad om utvidet rett pga. kronisk sykt eller funksjonshemmet barn
+
     omsorgspenger-midlertidig-alene:
-      link: ${OMSORGSPENGER_MIDLERTIDIG_ALENE_URL}
-      tittel: ${OMSORGSPENGER_MIDLERTIDIG_ALENE_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ekstra-omsorgsdager-andre-forelder-ikke-tilsyn
+      tittel: Søknad om ekstra omsorgsdager når den andre forelderen ikke kan ha tilsyn med barn
+
     omsorgspenger-utbetaling-arbeidstaker:
-      link: ${OMSORGSPENGER_UTBETALING_ARBEIDSTAKER_URL}
-      tittel: ${OMSORGSPENGER_UTBETALING_ARBEIDSTAKER_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspengerutbetaling-arbeidstaker
+      tittel: Søknad om utbetaling av omsorgspenger for arbeidstakere
+
     omsorgsdager-aleneomsorg:
-      link: ${OMSORGSDAGER_ALENEOMSORG_URL}
-      tittel: ${OMSORGSDAGER_ALENEOMSORG_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgsdager-aleneomsorg
+      tittel: Registrering av aleneomsorg for omsorgsdager
+
     omsorgspenger-utbetaling-snf:
-      link: ${OMSORGSPENGER_UTBETALING_SNF_URL}
-      tittel: ${OMSORGSPENGER_UTBETALING_SNF_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspengerutbetaling
+      tittel: Søknad om utbetaling av omsorgspenger - Selvstendig Næringsdrivende og Frilans
+
     ettersending:
-      link: ${ETTERSENDING_URL}
-      tittel: ${ETTERSENDING_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending
+      tittel: Melding om Ettersending
+
     ettersending-pleiepenger-sykt-barn:
-      link: ${ETTERSENDING_PLEIEPENGER_SYKT_BARN_URL}
-      tittel: ${ETTERSENDING_PLEIEPENGER_SYKT_BARN_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger/melding
+      tittel: Melding om Ettersending - Pleiepenger sykt barn
+
     ettersending-pleiepenger-livets-slutt:
-      link: ${ETTERSENDING_PLEIEPENGER_LIVETS_SLUTT_URL}
-      tittel: ${ETTERSENDING_PLEIEPENGER_LIVETS_SLUTT_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger-livets-sluttfase/melding
+      tittel: Melding om Ettersending - Pleiepenger livets sluttfase
+
     ettersending-omp:
-      link: ${ETTERSENDING_OMP_URL}
-      tittel: ${ETTERSENDING_OMP_TITTEL}
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/omsorgspenger/melding
+      tittel: Melding om Ettersending - Omsorgspenger
 
 management:
   endpoints:
