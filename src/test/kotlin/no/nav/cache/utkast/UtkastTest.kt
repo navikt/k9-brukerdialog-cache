@@ -1,5 +1,6 @@
 package no.nav.cache.utkast
 
+import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
 import java.util.*
@@ -19,7 +20,7 @@ class UtkastTest {
                  "@event_name": "deleted",
                  "utkastId": "$utkastId"
               }
-            """.trimIndent(), delete.serializeToJson(), false
+            """.trimIndent(), JSONObject(delete.serializeToJson()).toString(), false
         )
     }
 
@@ -45,7 +46,7 @@ class UtkastTest {
                  "tittel": "$tittel",
                  "link": "$link"
               }
-            """.trimIndent(), create.serializeToJson(), false
+            """.trimIndent(), JSONObject(create.serializeToJson()).toString(), false
         )
     }
 }

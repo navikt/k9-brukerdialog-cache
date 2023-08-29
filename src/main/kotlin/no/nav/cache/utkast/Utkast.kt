@@ -19,7 +19,7 @@ data class Utkast private constructor(
     private var metrics: MutableMap<String, String> = mutableMapOf(),
 ) {
 
-    fun serializeToJson(): String {
+    fun serializeToJson(): MutableMap<String, Any> {
         val mapper = utkastMapper()
 
         val tittelObject = tittelByLanguage.toJsonObject(mapper)
@@ -36,7 +36,7 @@ data class Utkast private constructor(
             "metrics" to metricsObject
         )
 
-        return mapper.writeValueAsString(fields)
+        return JSONObject(fields).toMap()
     }
 
     private fun utkastMapper() = ObjectMapper().registerKotlinModule().apply {

@@ -22,10 +22,12 @@ import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.producer.Producer
 import org.awaitility.kotlin.await
+import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -75,6 +77,9 @@ internal class IntegrationTest {
     lateinit var producer: Producer<String, Any> // Kafka producer som brukes til å legge på kafka meldinger.
     lateinit var utkastConsumer: Consumer<String, String> // Kafka consumer som brukes til å lese utkaster.
 
+    private companion object {
+        private val logger = LoggerFactory.getLogger(IntegrationTest::class.java)
+    }
 
     @BeforeEach
     internal fun setUp() {
@@ -118,6 +123,7 @@ internal class IntegrationTest {
         )
 
         val konsumertUtkast = utkastConsumer.hentMelding(Topics.K9_DITTNAV_VARSEL_UTKAST) { it == cacheInDB.utkastId }?.value()
+        logger.info("JSON UTKAST: {}", JSONObject(konsumertUtkast!!).toString(2))
         assertThat(konsumertUtkast).isNotNull()
     }
 
