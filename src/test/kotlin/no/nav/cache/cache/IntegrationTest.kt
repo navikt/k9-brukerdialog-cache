@@ -106,7 +106,7 @@ internal class IntegrationTest {
         val cacheInDB = cacheRepository.findByNøkkel(cacheResponseDTO.nøkkel)
         assertThat(cacheInDB).isNotNull()
         assertThat(cacheInDB!!.verdi).isNotEqualTo(postRequest.body!!.verdi)
-        //assertThat(cacheInDB.utkastId).isNotNull()
+        assertThat(cacheInDB.utkastId).isNotNull()
 
         restTemplate.getAndAssert(
             request = RequestEntity
