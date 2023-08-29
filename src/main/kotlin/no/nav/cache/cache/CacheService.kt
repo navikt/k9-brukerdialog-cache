@@ -2,7 +2,6 @@ package no.nav.cache.cache
 
 import no.nav.cache.util.ServletUtils
 import no.nav.cache.util.TokenUtils.personIdentifikator
-import no.nav.cache.utkast.Utkast
 import no.nav.cache.utkast.UtkastService
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
@@ -42,13 +41,16 @@ class CacheService(
             utkastService.opprettUtkast(fnr, it)
         }
 
-        return repo.save(cacheRequestDTO.somCacheEntryDAO(fnr, utkast)).somCacheResponseDTO(fnr)
+        return repo.save(cacheRequestDTO.somCacheEntryDAO(fnr, utkast?.utkastId)).somCacheResponseDTO(fnr)
     }
 
     fun oppdater(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
-        hent(cacheEntryDTO.nøkkelPrefiks)
-        return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
+        val cacheEntryDAO =
+            repo.findByNøkkel(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)) ?: throw CacheNotFoundException(
+                cacheEntryDTO.nøkkelPrefiks
+            )
+        return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr, cacheEntryDAO.utkastId)).somCacheResponseDTO(fnr)
     }
 
     @Throws(CacheNotFoundException::class)
@@ -101,13 +103,13 @@ class CacheService(
         )
     }
 
-    private fun CacheRequestDTO.somCacheEntryDAO(fnr: String, utkast: Utkast? = null): CacheEntryDAO {
+    private fun CacheRequestDTO.somCacheEntryDAO(fnr: String, utkastId: String? = null): CacheEntryDAO {
         val krypto = Krypto(passphrase = kryptoPassphrase, fnr = fnr)
         return CacheEntryDAO(
             nøkkel = genererNøkkel(nøkkelPrefiks, fnr),
             verdi = krypto.encrypt(verdi),
             ytelse = ytelse,
-            utkastId = utkast?.utkastId,
+            utkastId = utkastId,
             utløpsdato = utløpsdato,
             opprettet = opprettet ?: ZonedDateTime.now(UTC),
             endret = endret
