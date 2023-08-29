@@ -92,7 +92,7 @@ spring:
     bootstrap-servers: ${KAFKA_BROKERS}
     producer:
       client-id: ${HOSTNAME}
-      transaction-id-prefix: .tx-
+      transaction-id-prefix: .tx-${HOSTNAME}-
       retries: 3
 
 springdoc:

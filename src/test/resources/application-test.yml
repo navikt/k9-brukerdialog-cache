@@ -25,6 +25,7 @@ spring:
     bootstrap-servers: ${kafka-servers}
     producer:
       client-id: k9-brukerdialog-cache
+      transaction-id-prefix: .tx-k9-brukerdialog-cache-
 
 logging:
   level:
