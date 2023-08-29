@@ -50,6 +50,7 @@ class CacheService(
             repo.findByNøkkel(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)) ?: throw CacheNotFoundException(
                 cacheEntryDTO.nøkkelPrefiks
             )
+        logger.info("DEBUG oppdatering - cacheEntryDAO: {}", cacheEntryDAO)
         return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr, cacheEntryDAO.utkastId)).somCacheResponseDTO(fnr)
     }
 
@@ -70,6 +71,7 @@ class CacheService(
         repo.deleteById(cacheEntryDAO.nøkkel)
         if (repo.existsById(cacheEntryDAO.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
 
+        logger.info("DEBUG sletter utkast - cacheEntryDAO: {}", cacheEntryDAO)
         if (cacheEntryDAO.utkastId != null && cacheEntryDAO.ytelse != null) {
             utkastService.slettUtkast(cacheEntryDAO.ytelse, cacheEntryDAO.utkastId)
         }
