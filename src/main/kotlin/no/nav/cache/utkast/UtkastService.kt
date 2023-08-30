@@ -15,10 +15,9 @@ class UtkastService(
     }
 
     fun opprettUtkast(ident: String, ytelse: Ytelse): Utkast {
-        logger.info("Oppretter utkast ytelse: $ytelse")
         val utkast = mineSiderProperties.opprettUtkast(ident, ytelse)
+        logger.info("Oppretter utkast for ytelse: $ytelse med id: ${utkast.utkastId}")
         mineSiderService.sendUtkast(utkast.utkastId!!, utkast.byggK9Utkast(ytelse))
-        logger.info("Utkast opprettet med id: ${utkast.utkastId}")
         return utkast
     }
 
@@ -26,6 +25,5 @@ class UtkastService(
         logger.info("Sletter utkast ytelse: $ytelse med id: $utkastId")
         val utkast = Utkast.Builder().utkastId(utkastId).delete()
         mineSiderService.sendUtkast(utkastId, utkast.byggK9Utkast(ytelse))
-        logger.info("Utkast slettet med id: $utkastId")
     }
 }

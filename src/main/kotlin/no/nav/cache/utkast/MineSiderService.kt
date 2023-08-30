@@ -3,6 +3,7 @@ package no.nav.cache.utkast
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.cache.kafka.Topics.K9_DITTNAV_VARSEL_UTKAST
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.json.JSONObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.core.KafkaTemplate
@@ -27,11 +28,12 @@ class MineSiderService(
                 throw ex
             }
             .thenAccept { result: SendResult<String, String> ->
-                log.info("DEBUG: Utkast: {}", result.producerRecord.value()) // TODO: Fjern før produksjon
+                val utkastPayload = JSONObject(result.producerRecord.value()).remove("ident")
                 log.info(
-                    "Sendte melding med offset {} på {}",
+                    "Sendte utkast med offset {} på topic {}. Payload: {} ",
                     result.recordMetadata.offset(),
-                    result.producerRecord.topic()
+                    result.producerRecord.topic(),
+                    utkastPayload
                 )
             }
     }

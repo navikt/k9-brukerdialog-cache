@@ -20,11 +20,11 @@ no.nav:
 
     pleiepenger-livets-slutt:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/pleiepenger-i-livets-sluttfase
-      tittel: Søknad om pleiepenger ved pleie i hjemmet av nærstående i livets sluttfase
+      tittel: Søknad om pleiepenger i livets sluttfase
 
     omsorgspenger-utvidet-rett:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspenger
-      tittel: Søknad om utvidet rett pga. kronisk sykt eller funksjonshemmet barn
+      tittel: Søknad om ekstra omsorgsdager for et barn som er kronisk sykt, funksjonshemmet eller langvarig sykt
 
     omsorgspenger-midlertidig-alene:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/ekstra-omsorgsdager-andre-forelder-ikke-tilsyn
@@ -32,31 +32,31 @@ no.nav:
 
     omsorgspenger-utbetaling-arbeidstaker:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspengerutbetaling-arbeidstaker
-      tittel: Søknad om utbetaling av omsorgspenger for arbeidstakere
+      tittel: Søknad om utbetaling av omsorgspenger når arbeidsgiver ikke utbetaler
 
     omsorgsdager-aleneomsorg:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgsdager-aleneomsorg
-      tittel: Registrering av aleneomsorg for omsorgsdager
+      tittel: Søknad om ekstra omsorgsdager ved aleneomsorg
 
     omsorgspenger-utbetaling-snf:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspengerutbetaling
-      tittel: Søknad om utbetaling av omsorgspenger - Selvstendig Næringsdrivende og Frilans
+      tittel: Søknad om utbetaling av omsorgspenger for selvstendig næringsdrivende og frilansere
 
     ettersending:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending
-      tittel: Melding om Ettersending
+      tittel: Ettersendelse av dokumentasjon
 
     ettersending-pleiepenger-sykt-barn:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger/melding
-      tittel: Melding om Ettersending - Pleiepenger sykt barn
+      tittel: Ettersendelse av dokumentasjon til søknad om pleiepenger
 
     ettersending-pleiepenger-livets-slutt:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger-livets-sluttfase/melding
-      tittel: Melding om Ettersending - Pleiepenger livets sluttfase
+      tittel: Ettersendelse av dokumentasjon til søknad om pleiepenger i livets sluttfase
 
     ettersending-omp:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/omsorgspenger/melding
-      tittel: Melding om Ettersending - Omsorgspenger
+      tittel: Ettersendelse av dokumentasjon til omsorgspenger
 
 management:
   endpoints:
