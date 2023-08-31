@@ -48,7 +48,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.yaml:snakeyaml:2.1") {
+    implementation("org.yaml:snakeyaml:2.2") {
         because("https://github.com/navikt/k9-brukerdialog-cache/security/dependabot/1")
     }
 
