@@ -42,12 +42,16 @@ ext["testcontainersVersion"] = testcontainersVersion
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.spring.io/milestone") }
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
     implementation("org.yaml:snakeyaml:2.1") {
         because("https://github.com/navikt/k9-brukerdialog-cache/security/dependabot/1")
     }
+
 
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
     testImplementation("no.nav.security:token-validation-spring-test:$tokenSupportVersion")
@@ -62,7 +66,6 @@ dependencies {
     //implementation("org.springframework.boot:spring-boot-starter-jetty")
     implementation("org.springframework:spring-aspects")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "mockito-core")
     }
@@ -81,6 +84,18 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+
+    //Kafka
+    implementation("org.springframework.kafka:spring-kafka")
+    constraints {
+        implementation("org.scala-lang:scala-library") {
+            because("org.apache.kafka:kafka_2.13:3.3.2 -> https://www.cve.org/CVERecord?id=CVE-2022-36944")
+            version {
+                require("2.13.9")
+            }
+        }
+    }
+    testImplementation("org.springframework.kafka:spring-kafka-test")
 
     // Jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

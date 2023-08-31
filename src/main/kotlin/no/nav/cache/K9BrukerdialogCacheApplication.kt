@@ -1,5 +1,6 @@
 package no.nav.cache
 
+import no.nav.cache.utkast.MineSiderProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
@@ -14,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 )
 @EnableScheduling
 @ConfigurationPropertiesScan("no.nav.cache")
-@EnableConfigurationProperties
+@EnableConfigurationProperties(MineSiderProperties::class)
 class K9BrukerdialogCacheApplication
 
 fun main(args: Array<String>) {

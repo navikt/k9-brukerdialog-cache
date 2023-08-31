@@ -9,6 +9,55 @@ no.nav:
   scheduled:
     utgått-cache: 300000 # 5 minutter
 
+  mine-sider:
+    psb-soknad:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/pleiepenger
+      tittel: Søknad om pleiepenger for sykt barn
+
+    psb-endringsmelding:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/endringsmelding-pleiepenger
+      tittel: Endringsmelding for pleiepenger sykt barn
+
+    pleiepenger-livets-slutt:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/pleiepenger-i-livets-sluttfase
+      tittel: Søknad om pleiepenger i livets sluttfase
+
+    omsorgspenger-utvidet-rett:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspenger
+      tittel: Søknad om ekstra omsorgsdager for et barn som er kronisk sykt, funksjonshemmet eller langvarig sykt
+
+    omsorgspenger-midlertidig-alene:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ekstra-omsorgsdager-andre-forelder-ikke-tilsyn
+      tittel: Søknad om ekstra omsorgsdager når den andre forelderen ikke kan ha tilsyn med barn
+
+    omsorgspenger-utbetaling-arbeidstaker:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspengerutbetaling-arbeidstaker
+      tittel: Søknad om utbetaling av omsorgspenger når arbeidsgiver ikke utbetaler
+
+    omsorgsdager-aleneomsorg:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgsdager-aleneomsorg
+      tittel: Søknad om ekstra omsorgsdager ved aleneomsorg
+
+    omsorgspenger-utbetaling-snf:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/omsorgspengerutbetaling
+      tittel: Søknad om utbetaling av omsorgspenger for selvstendig næringsdrivende og frilansere
+
+    ettersending:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending
+      tittel: Ettersendelse av dokumentasjon
+
+    ettersending-pleiepenger-sykt-barn:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger/melding
+      tittel: Ettersendelse av dokumentasjon til søknad om pleiepenger
+
+    ettersending-pleiepenger-livets-slutt:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger-livets-sluttfase/melding
+      tittel: Ettersendelse av dokumentasjon til søknad om pleiepenger i livets sluttfase
+
+    ettersending-omp:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/omsorgspenger/melding
+      tittel: Ettersendelse av dokumentasjon til omsorgspenger
+
 management:
   endpoints:
     web:
@@ -38,6 +87,13 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    producer:
+      client-id: ${HOSTNAME}
+      transaction-id-prefix: .tx-${HOSTNAME}-
+      retries: 3
 
 springdoc:
   api-docs:

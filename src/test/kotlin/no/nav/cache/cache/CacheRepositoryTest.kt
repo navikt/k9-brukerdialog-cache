@@ -39,18 +39,21 @@ class CacheRepositoryTest {
                 CacheEntryDAO(
                     nøkkel = "nøkkel-1",
                     verdi = "cache som utløper 1",
+                    ytelse = Ytelse.PLEIEPENGER_SYKT_BARN,
                     utløpsdato = utløpsdato,
                     opprettet = now.minusHours(1)
                 ),
                 CacheEntryDAO(
                     nøkkel = "nøkkel-2",
                     verdi = "cache som utløper 2",
+                    ytelse = Ytelse.PLEIEPENGER_SYKT_BARN,
                     utløpsdato = utløpsdato,
                     opprettet = now.minusHours(1)
                 ),
                 CacheEntryDAO(
                     nøkkel = "nøkkel-3",
                     verdi = "skal ikke utløpe enda",
+                    ytelse = Ytelse.PLEIEPENGER_SYKT_BARN,
                     utløpsdato = utløpsdato.plusMinutes(30),
                     opprettet = now.minusHours(1)
                 )

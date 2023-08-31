@@ -9,3 +9,52 @@ management:
 spring:
   mvc:
     log-request-details: true
+
+  kafka:
+    security:
+      protocol: SSL
+    ssl:
+      trust-store-location: file:${KAFKA_TRUSTSTORE_PATH}
+      trust-store-password: ${KAFKA_CREDSTORE_PASSWORD}
+      trust-store-type: JKS
+      key-store-location: file:${KAFKA_KEYSTORE_PATH}
+      key-store-password: ${KAFKA_CREDSTORE_PASSWORD}
+      key-store-type: PKCS12
+
+no.nav:
+  mine-sider:
+    psb-soknad:
+      link: https://pleiepengesoknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/pleiepenger
+
+    psb-endringsmelding:
+      link: https://endringsmelding-pleiepenger.intern.dev.nav.no
+
+    pleiepenger-livets-slutt:
+      link: https://pleiepenger-i-livets-sluttfase.intern.dev.nav.no
+
+    omsorgspenger-utvidet-rett:
+      link: https://omsorgspengesoknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/omsorgspenger/soknad
+
+    omsorgspenger-midlertidig-alene:
+      link: https://ekstra-omsorgsdager-andre-forelder-ikke-tilsyn.intern.dev.nav.no
+
+    omsorgspenger-utbetaling-arbeidstaker:
+      link: https://omsorgspengerutbetaling-arbeidstaker-soknad.intern.dev.nav.no
+
+    omsorgspenger-utbetaling-snf:
+      link: https://omsorgspengerutbetaling-soknad.intern.dev.nav.no
+
+    omsorgsdager-aleneomsorg:
+      link: https://omsorgsdager-aleneomsorg-dialog.intern.dev.nav.no
+
+    ettersending:
+      link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending
+
+    ettersending-pleiepenger-sykt-barn:
+      link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger
+
+    ettersending-pleiepenger-livets-slutt:
+      link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending/pleiepenger-livets-sluttfase
+
+    ettersending-omp:
+      link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending/omsorgspenger

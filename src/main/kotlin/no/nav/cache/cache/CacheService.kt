@@ -2,6 +2,7 @@ package no.nav.cache.cache
 
 import no.nav.cache.util.ServletUtils
 import no.nav.cache.util.TokenUtils.personIdentifikator
+import no.nav.cache.utkast.UtkastService
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.ErrorResponseException
 import java.net.URI
 import java.net.URLDecoder
@@ -21,6 +23,7 @@ class CacheService(
     private val repo: CacheRepository,
     private val tokenValidationContextHolder: SpringTokenValidationContextHolder,
     @Value("\${krypto.passphrase}") private val kryptoPassphrase: String,
+    private val utkastService: UtkastService
 ) {
 
     companion object {
@@ -28,39 +31,65 @@ class CacheService(
         private fun genererNøkkel(prefix: String, fnr: String) = "${prefix}_$fnr"
     }
 
-    fun lagre(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
+    @Transactional("transactionManager")
+    fun lagre(cacheRequestDTO: CacheRequestDTO): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
-        if (repo.existsById(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)))
-            throw CacheConflictException(cacheEntryDTO.nøkkelPrefiks)
+        if (repo.existsById(genererNøkkel(cacheRequestDTO.nøkkelPrefiks, fnr)))
+            throw CacheConflictException(cacheRequestDTO.nøkkelPrefiks)
 
-        return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
+        val utkast = cacheRequestDTO.ytelse?.let {
+            utkastService.opprettUtkast(fnr, it)
+        }
+
+        return repo.save(cacheRequestDTO.somCacheEntryDAO(fnr, utkast?.utkastId)).somCacheResponseDTO(fnr)
     }
 
     fun oppdater(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
-        hent(cacheEntryDTO.nøkkelPrefiks)
-        return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr)).somCacheResponseDTO(fnr)
+        val cacheEntryDAO =
+            repo.findByNøkkel(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)) ?: throw CacheNotFoundException(
+                cacheEntryDTO.nøkkelPrefiks
+            )
+
+        return repo.save(cacheEntryDTO.somCacheEntryDAO(fnr, cacheEntryDAO.utkastId)).somCacheResponseDTO(fnr)
     }
 
     @Throws(CacheNotFoundException::class)
     fun hent(nøkkelPrefiks: String): CacheResponseDTO {
         val fnr = tokenValidationContextHolder.personIdentifikator()
-        return repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr))?.let {
-            it.somCacheResponseDTO(fnr)
-        } ?: throw CacheNotFoundException(nøkkelPrefiks)
+        return repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr))?.somCacheResponseDTO(fnr)
+            ?: throw CacheNotFoundException(nøkkelPrefiks)
     }
 
+    @Transactional("transactionManager")
     @Throws(FailedCacheDeletionException::class)
     fun slett(nøkkelPrefiks: String) {
-        val verdi = hent(nøkkelPrefiks)
-        repo.deleteById(verdi.nøkkel)
-        if (repo.existsById(verdi.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
+        val fnr = tokenValidationContextHolder.personIdentifikator()
+        val cacheEntryDAO =
+            repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr)) ?: throw CacheNotFoundException(nøkkelPrefiks)
+
+        repo.deleteById(cacheEntryDAO.nøkkel)
+        if (repo.existsById(cacheEntryDAO.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
+
+        if (cacheEntryDAO.utkastId != null && cacheEntryDAO.ytelse != null) {
+            utkastService.slettUtkast(cacheEntryDAO.ytelse, cacheEntryDAO.utkastId)
+        }
     }
 
+    @Transactional("transactionManager")
     @Scheduled(fixedRateString = "#{'\${no.nav.scheduled.utgått-cache}'}")
     fun slettUtgåtteCache() {
         logger.info("Sletter utgåtte cache...")
-        val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsBefore(ZonedDateTime.now(UTC))
+        val now = ZonedDateTime.now(UTC)
+
+        repo.findAllByUtløpsdatoIsBefore(now)
+            .filterNot { it.utkastId == null }
+            .filterNot { it.ytelse == null }
+            .forEach { cacheEntryDAO ->
+                utkastService.slettUtkast(cacheEntryDAO.ytelse!!, cacheEntryDAO.utkastId!!)
+            }
+
+        val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsBefore(now)
         logger.info("Slettet {} utgåtte cache.", antallSlettedeCache)
     }
 
@@ -75,11 +104,13 @@ class CacheService(
         )
     }
 
-    private fun CacheRequestDTO.somCacheEntryDAO(fnr: String): CacheEntryDAO {
+    private fun CacheRequestDTO.somCacheEntryDAO(fnr: String, utkastId: String? = null): CacheEntryDAO {
         val krypto = Krypto(passphrase = kryptoPassphrase, fnr = fnr)
         return CacheEntryDAO(
             nøkkel = genererNøkkel(nøkkelPrefiks, fnr),
             verdi = krypto.encrypt(verdi),
+            ytelse = ytelse,
+            utkastId = utkastId,
             utløpsdato = utløpsdato,
             opprettet = opprettet ?: ZonedDateTime.now(UTC),
             endret = endret
@@ -87,7 +118,8 @@ class CacheService(
     }
 }
 
-class CacheNotFoundException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.NOT_FOUND, asProblemDetail(nøkkelPrefiks), null) {
+class CacheNotFoundException(nøkkelPrefiks: String) :
+    ErrorResponseException(HttpStatus.NOT_FOUND, asProblemDetail(nøkkelPrefiks), null) {
     private companion object {
         private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
             val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
@@ -103,7 +135,8 @@ class CacheNotFoundException(nøkkelPrefiks: String) : ErrorResponseException(Ht
 }
 
 
-class FailedCacheDeletionException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, asProblemDetail(nøkkelPrefiks), null) {
+class FailedCacheDeletionException(nøkkelPrefiks: String) :
+    ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, asProblemDetail(nøkkelPrefiks), null) {
     private companion object {
         private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
             val problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -117,7 +150,9 @@ class FailedCacheDeletionException(nøkkelPrefiks: String) : ErrorResponseExcept
         }
     }
 }
-class CacheConflictException(nøkkelPrefiks: String) : ErrorResponseException(HttpStatus.CONFLICT, asProblemDetail(nøkkelPrefiks), null) {
+
+class CacheConflictException(nøkkelPrefiks: String) :
+    ErrorResponseException(HttpStatus.CONFLICT, asProblemDetail(nøkkelPrefiks), null) {
     private companion object {
         private fun asProblemDetail(nøkkelPrefiks: String): ProblemDetail {
             val problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT)
