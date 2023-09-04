@@ -11,7 +11,7 @@ data class K9Utkast(
 )
 
 fun Utkast.byggK9Utkast(ytelse: Ytelse) = K9Utkast(
-    metadata = Metadata(version = 1, correlationId = MDCUtil.callId()),
+    metadata = Metadata(version = 1, correlationId = MDCUtil.callIdOrNew()),
     ytelse = ytelse,
     utkast = serializeToJson()
 )
