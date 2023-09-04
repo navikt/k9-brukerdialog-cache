@@ -12,7 +12,8 @@ object MDCUtil {
     }
 
     fun callIdOrNew(): String {
-        return Optional.ofNullable(callId()).orElse(GEN.create())
+        val callId = runCatching { callId() }
+        return Optional.ofNullable(callId.getOrNull()).orElse(GEN.create())
     }
 
     fun toMDC(key: String?, value: Any?) {
