@@ -4,9 +4,9 @@ plugins {
     kotlin("jvm") version "1.9.10"
     kotlin("plugin.spring") version "1.9.10"
     kotlin("plugin.jpa") version "1.9.10"
-    id("org.springframework.boot") version "3.1.3"
+    id("org.springframework.boot") version "3.1.4"
     id("io.spring.dependency-management") version "1.1.3"
-    id("org.sonarqube") version "4.3.0.3225"
+    id("org.sonarqube") version "4.4.0.3356"
     jacoco
 }
 
@@ -48,7 +48,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.yaml:snakeyaml:2.1") {
+    implementation("org.yaml:snakeyaml:2.2") {
         because("https://github.com/navikt/k9-brukerdialog-cache/security/dependabot/1")
     }
 
