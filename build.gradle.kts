@@ -23,7 +23,7 @@ configurations {
 }
 
 val logstashLogbackEncoderVersion by extra("7.2")
-val tokenSupportVersion by extra("3.0.8")
+val tokenSupportVersion by extra("3.2.0")
 val springCloudVersion by extra("2022.0.0-RC2")
 val retryVersion by extra("2.0.2")
 val postgresqlVersion by extra("42.5.1")
