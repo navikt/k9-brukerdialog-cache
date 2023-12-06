@@ -33,7 +33,7 @@ val springMockkVersion by extra("3.1.2")
 val mockkVersion by extra("1.13.2")
 val guavaVersion by extra("31.1-jre")
 val okHttp3Version by extra("4.10.0")
-val orgJsonVersion by extra("20230227")
+val orgJsonVersion by extra("20231013")
 val springdocVersion by extra("2.3.0")
 val testcontainersVersion by extra("1.17.6")
 
