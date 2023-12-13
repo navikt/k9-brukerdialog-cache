@@ -17,12 +17,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: pleiepengesoknad-api
         - application: k9-brukerdialog-api
-        {{#if nonProd}}
-        - application: debug-dings
-          namespace: plattformsikkerhet
-        {{/if}}
     outbound:
       external:
         {{#each externalHosts as |host|}}
@@ -42,14 +37,10 @@ spec:
   resources:
     limits:
       cpu: 2000m
-      memory: 3072Mi
+      memory: 2048Mi
     requests:
       cpu: 80m
-      memory: 1536Mi
-  ingresses:
-  {{#each ingresses as |url|}}
-     - {{url}}
-  {{/each}}
+      memory: 768Mi
   replicas:
     min: {{minReplicas}}
     max: {{maxReplicas}}
