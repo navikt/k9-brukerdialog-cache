@@ -5,6 +5,9 @@
   "team": "dusseldorf",
   "minReplicas": "2",
   "maxReplicas": "2",
+  "ingresses": [
+    "https://k9-brukerdialog-cache.intern.dev.nav.no"
+  ],
   "externalHosts": [
     "login.microsoftonline.com"
   ],

@@ -8,6 +8,10 @@ metadata:
 spec:
   image: {{ image }}
   port: 8080
+  ingresses:
+  {{#each ingresses as |url|}}
+    - {{url}}
+  {{/each}}
   azure:
     application:
       enabled: true
