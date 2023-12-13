@@ -1,14 +1,10 @@
 {
   "app": "k9-brukerdialog-cache",
   "cluster": "dev-gcp",
-  "nonProd": "true",
   "namespace": "dusseldorf",
   "team": "dusseldorf",
   "minReplicas": "2",
   "maxReplicas": "2",
-  "ingresses": [
-    "https://k9-brukerdialog-cache.intern.dev.nav.no"
-  ],
   "externalHosts": [
     "login.microsoftonline.com"
   ],
