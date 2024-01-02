@@ -8,7 +8,7 @@ on:
       - 'nais/prod-gcp.json'
       - '.github/workflows/apply-alerts.yml'
     branches:
-      - 'master'
+      - 'main'
       - 'dev-**'
 
 jobs:
