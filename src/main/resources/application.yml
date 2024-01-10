@@ -69,9 +69,7 @@ spring:
     name: # Settes i nais/<cluster>.json
 
   flyway:
-    baselineOnMigrate: true
     enabled: true
-    clean-on-validation-error: true
   jpa:
     properties:
       hibernate:
