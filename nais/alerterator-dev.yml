@@ -53,7 +53,6 @@ spec:
             severity: critical
 
         - alert: Høy andel HTTP klientfeil (4xx responser)
-          severity: critical
           expr: floor(increase(http_server_requests_seconds_count{status=~"4.*", status!~"404|401|403", app="{{app}}"}[3m])) > 0
           for: 1m
           annotations:
