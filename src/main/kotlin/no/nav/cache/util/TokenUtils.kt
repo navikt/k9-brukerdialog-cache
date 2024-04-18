@@ -5,10 +5,15 @@ import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 
 object TokenUtils {
     fun SpringTokenValidationContextHolder.personIdentifikator() =
-        tokenValidationContext.firstValidToken.get().personIdentifikator()
+        getTokenValidationContext()
+            .firstValidToken?.personIdentifikator()
 
     fun JwtToken.personIdentifikator(): String =
-        jwtTokenClaims["pid"] as String?
-            ?: jwtTokenClaims["sub"] as String?
-            ?: throw IllegalStateException("Token claims inneholder verken pid eller sub.")
+        if (jwtTokenClaims.allClaims.containsKey("pid")) {
+            jwtTokenClaims.getStringClaim("pid")
+        } else if (jwtTokenClaims.allClaims.containsKey("sub")) {
+            jwtTokenClaims.getStringClaim("sub")
+        } else {
+            throw IllegalStateException("Token claims inneholder verken pid eller sub.")
+        }
 }

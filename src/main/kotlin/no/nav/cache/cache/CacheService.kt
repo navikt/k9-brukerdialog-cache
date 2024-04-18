@@ -33,7 +33,7 @@ class CacheService(
 
     @Transactional("transactionManager")
     fun lagre(cacheRequestDTO: CacheRequestDTO): CacheResponseDTO {
-        val fnr = tokenValidationContextHolder.personIdentifikator()
+        val fnr = getFnrFraToken()
         if (repo.existsById(genererNøkkel(cacheRequestDTO.nøkkelPrefiks, fnr)))
             throw CacheConflictException(cacheRequestDTO.nøkkelPrefiks)
 
@@ -45,7 +45,7 @@ class CacheService(
     }
 
     fun oppdater(cacheEntryDTO: CacheRequestDTO): CacheResponseDTO {
-        val fnr = tokenValidationContextHolder.personIdentifikator()
+        val fnr = getFnrFraToken()
         val cacheEntryDAO =
             repo.findByNøkkel(genererNøkkel(cacheEntryDTO.nøkkelPrefiks, fnr)) ?: throw CacheNotFoundException(
                 cacheEntryDTO.nøkkelPrefiks
@@ -56,7 +56,7 @@ class CacheService(
 
     @Throws(CacheNotFoundException::class)
     fun hent(nøkkelPrefiks: String): CacheResponseDTO {
-        val fnr = tokenValidationContextHolder.personIdentifikator()
+        val fnr = getFnrFraToken()
         return repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr))?.somCacheResponseDTO(fnr)
             ?: throw CacheNotFoundException(nøkkelPrefiks)
     }
@@ -64,7 +64,7 @@ class CacheService(
     @Transactional("transactionManager")
     @Throws(FailedCacheDeletionException::class)
     fun slett(nøkkelPrefiks: String) {
-        val fnr = tokenValidationContextHolder.personIdentifikator()
+        val fnr = getFnrFraToken()
         val cacheEntryDAO =
             repo.findByNøkkel(genererNøkkel(nøkkelPrefiks, fnr)) ?: throw CacheNotFoundException(nøkkelPrefiks)
 
@@ -116,6 +116,9 @@ class CacheService(
             endret = endret
         )
     }
+
+    private fun getFnrFraToken(): String =
+        tokenValidationContextHolder.personIdentifikator() ?: throw IllegalStateException("Token mangler fnr")
 }
 
 class CacheNotFoundException(nøkkelPrefiks: String) :
