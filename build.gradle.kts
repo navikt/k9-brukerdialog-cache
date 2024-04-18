@@ -1,18 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.spring") version "1.9.22"
-    kotlin("plugin.jpa") version "1.9.22"
-    id("org.springframework.boot") version "3.2.2"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.spring") version "1.9.23"
+    kotlin("plugin.jpa") version "1.9.23"
+    id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
-    id("org.sonarqube") version "4.4.1.3373"
+    id("org.sonarqube") version "5.0.0.4638"
     jacoco
 }
 
 group = "no.nav"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 
 
@@ -22,20 +22,20 @@ configurations {
     }
 }
 
-val logstashLogbackEncoderVersion by extra("7.2")
-val tokenSupportVersion by extra("3.2.0")
+val logstashLogbackEncoderVersion by extra("7.4")
+val tokenSupportVersion by extra("4.1.4")
 val springCloudVersion by extra("2022.0.0-RC2")
-val retryVersion by extra("2.0.2")
-val postgresqlVersion by extra("42.5.1")
-val awailitilityKotlinVersion by extra("4.2.0")
-val assertkJvmVersion by extra("0.25")
-val springMockkVersion by extra("3.1.2")
-val mockkVersion by extra("1.13.2")
+val retryVersion by extra("2.0.5")
+val postgresqlVersion by extra("42.7.2")
+val awailitilityKotlinVersion by extra("4.2.1")
+val assertkJvmVersion by extra("0.28.0")
+val springMockkVersion by extra("4.0.2")
+val mockkVersion by extra("1.13.10")
 val guavaVersion by extra("31.1-jre")
-val okHttp3Version by extra("4.10.0")
-val orgJsonVersion by extra("20231013")
-val springdocVersion by extra("2.3.0")
-val testcontainersVersion by extra("1.17.6")
+val okHttp3Version by extra("4.12.0")
+val orgJsonVersion by extra("20240303")
+val springdocVersion by extra("2.5.0")
+val testcontainersVersion by extra("1.19.7")
 
 ext["testcontainersVersion"] = testcontainersVersion
 
@@ -140,7 +140,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
+            jvmTarget = "21"
         }
     }
 
@@ -149,7 +149,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "8.2.1"
+        gradleVersion = "8.5"
     }
 }
 
