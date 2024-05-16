@@ -10,6 +10,7 @@ data class K9Utkast(
     val utkast: MutableMap<String, Any>
 )
 
+
 fun Utkast.byggK9Utkast(ytelse: Ytelse) = K9Utkast(
     metadata = Metadata(version = 1, correlationId = MDCUtil.callIdOrNew()),
     ytelse = ytelse,

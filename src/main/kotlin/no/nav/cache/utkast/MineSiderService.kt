@@ -30,6 +30,7 @@ class MineSiderService(
             .thenAccept { result: SendResult<String, String> ->
                 val anonymisertUtkast = JSONObject(result.producerRecord.value())
                 anonymisertUtkast.put("ident", "****") // Fjerner ident fra utkastet før det logges.
+                anonymisertUtkast.getJSONObject("utkast").put("ident", "****") // Fjerner ident fra utkastet før det logges.
                 log.info(
                     "Sendte utkast med offset {} på topic {}. Payload: {} ",
                     result.recordMetadata.offset(),
