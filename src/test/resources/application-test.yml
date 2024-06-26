@@ -15,11 +15,11 @@ spring:
   mvc:
     log-request-details: true
   datasource:
-    url: jdbc:tc:postgresql:12:///
+    url: jdbc:tc:postgresql:15:///
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   jpa:
     show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQL12Dialect
+    database-platform: org.hibernate.dialect.PostgreSQL15Dialect
 
   kafka:
     bootstrap-servers: ${kafka-servers}
