@@ -91,6 +91,23 @@ internal class IntegrationTest {
     }
 
     @Test
+    fun `Mellomlagring av tom json verdi skal ikke gi feil`() {
+        restTemplate.postAndAssert<CacheRequestDTO, CacheResponseDTO>(
+            request = RequestEntity
+                .post(CACHE_PATH)
+                .headers(hentToken().tokenTilHeader())
+                .body(
+                    CacheRequestDTO(
+                        nøkkelPrefiks = "mellomlagring_psb",
+                        verdi = "{}",
+                        utløpsdato = ZonedDateTime.now().plusDays(3)
+                    )
+                ),
+            expectedStatus = HttpStatus.CREATED
+        )
+    }
+
+    @Test
     fun `gitt cache lagres, forvent samme verdi ved henting`() {
         val postRequest = RequestEntity
             .post(CACHE_PATH)
