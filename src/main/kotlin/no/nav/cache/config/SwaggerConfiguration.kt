@@ -48,7 +48,7 @@ class SwaggerConfiguration {
             .`in`(SecurityScheme.In.HEADER)
             .description(
                 """Eksempel på verdi som skal inn i Value-feltet (Bearer trengs altså ikke å oppgis): 'eyAidH...'
-                For nytt token -> https://tokenx-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp:dusseldorf:k9-brukerdialog-prosessering
+                For nytt token -> https://tokenx-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp:dusseldorf:k9-brukerdialog-cache
             """.trimMargin()
             )
     }
