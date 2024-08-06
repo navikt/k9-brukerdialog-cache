@@ -8,6 +8,13 @@
   "ingresses": [
     "https://k9-brukerdialog-cache.intern.dev.nav.no"
   ],
+  "inboundRules": [
+    {
+      "app": "tokenx-token-generator",
+      "namespace": "aura",
+      "cluster": "dev-gcp"
+    }
+  ],
   "externalHosts": [
     "login.microsoftonline.com"
   ],

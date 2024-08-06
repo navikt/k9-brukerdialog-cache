@@ -6,10 +6,10 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
-import io.swagger.v3.oas.models.servers.Server
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpHeaders
 
 @Configuration
 @Profile("local", "dev-gcp")
@@ -18,9 +18,6 @@ class SwaggerConfiguration {
     @Bean
     fun openAPI(): OpenAPI {
         return OpenAPI()
-            .addServersItem(
-                Server().url("https://k9-brukerdialog-cache.dev.nav.no/").description("Swagger Server")
-            )
             .info(
                 Info()
                     .title("K9 Brukerdialog Cache")
@@ -34,22 +31,25 @@ class SwaggerConfiguration {
             )
             .components(
                 Components()
-                    .addSecuritySchemes(
-                        "bearer-jwt", SecurityScheme()
-                            .type(SecurityScheme.Type.HTTP)
-                            .scheme("bearer")
-                            .bearerFormat("JWT")
-                            .`in`(SecurityScheme.In.HEADER)
-                            .name("Authorization")
-                            .description("""
-                                Må være en gyldig tokenX token scopet for denne tjenesten.
-                                For å teste apiet, kan du bruke debug-dings: `https://debug-dings.dev-gcp.nais.io`.
-                                Velg innloggingsmetode, og deretter velg en testbruker som beskrevet her: `https://docs.digdir.no/docs/idporten/idporten/idporten_testbrukere`.
-                                Etter innlogging scroller du ned til `audience` og legger inn `dev-gcp:dusseldorf:k9-brukerdialog-cache` og deretter `Get a token`.
-                                Kopier `access_token` under `Token Response` og lim den inn her.
-                            """.trimIndent())
-                    )
+                    .addSecuritySchemes("Authorization", tokenXApiToken())
             )
-            .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
+            .addSecurityItem(
+                SecurityRequirement()
+                    .addList("Authorization")
+            )
+    }
+
+    private fun tokenXApiToken(): SecurityScheme {
+        return SecurityScheme()
+            .type(SecurityScheme.Type.HTTP)
+            .name(HttpHeaders.AUTHORIZATION)
+            .scheme("bearer")
+            .bearerFormat("JWT")
+            .`in`(SecurityScheme.In.HEADER)
+            .description(
+                """Eksempel på verdi som skal inn i Value-feltet (Bearer trengs altså ikke å oppgis): 'eyAidH...'
+                For nytt token -> https://tokenx-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp:dusseldorf:k9-brukerdialog-prosessering
+            """.trimMargin()
+            )
     }
 }

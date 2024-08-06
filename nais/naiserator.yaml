@@ -23,6 +23,11 @@ spec:
       rules:
         - application: k9-brukerdialog-api
         - application: k9-brukerdialog-prosessering
+      {{#each inboundRules}}
+        - application: {{app}}
+          namespace: {{namespace}}
+          cluster: {{cluster}}
+      {{/each}}
     outbound:
       external:
         {{#each externalHosts as |host|}}
