@@ -176,7 +176,7 @@ internal class IntegrationTest {
                     .headers(hentToken().tokenTilHeader())
                     .build(),
                 expectedStatus = HttpStatus.OK,
-                expectedBody = cacheResponseDTO
+                expectedBody = Unit
             )
 
             val konsumertUtkast =
