@@ -163,24 +163,26 @@ internal class IntegrationTest {
             expectedStatus = HttpStatus.CREATED
         )
 
-        val cacheInDB = cacheRepository.findByNøkkel(cacheResponseDTO.nøkkel)
-        assertThat(cacheInDB).isNotNull()
-        assertThat(cacheInDB!!.verdi).isNotEqualTo(postRequest.body!!.verdi)
-        assertThat(cacheInDB.utkastId).isNotNull()
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val cacheInDB = cacheRepository.findByNøkkel(cacheResponseDTO.nøkkel)
+            assertThat(cacheInDB).isNotNull()
+            assertThat(cacheInDB!!.verdi).isNotEqualTo(postRequest.body!!.verdi)
+            assertThat(cacheInDB.utkastId).isNotNull()
 
-        restTemplate.getAndAssert(
-            request = RequestEntity
-                .get("$CACHE_PATH/mellomlagring_psb")
-                .headers(hentToken().tokenTilHeader())
-                .build(),
-            expectedStatus = HttpStatus.OK,
-            expectedBody = cacheResponseDTO
-        )
+            restTemplate.getAndAssert(
+                request = RequestEntity
+                    .get("$CACHE_PATH/mellomlagring_psb")
+                    .headers(hentToken().tokenTilHeader())
+                    .build(),
+                expectedStatus = HttpStatus.OK,
+                expectedBody = cacheResponseDTO
+            )
 
-        val konsumertUtkast =
-            utkastConsumer.hentMelding(Topics.K9_DITTNAV_VARSEL_UTKAST) { it == cacheInDB.utkastId }?.value()
-        logger.info("JSON UTKAST: {}", JSONObject(konsumertUtkast!!).toString(2))
-        assertThat(konsumertUtkast).isNotNull()
+            val konsumertUtkast =
+                utkastConsumer.hentMelding(Topics.K9_DITTNAV_VARSEL_UTKAST) { it == cacheInDB.utkastId }?.value()
+            logger.info("JSON UTKAST: {}", JSONObject(konsumertUtkast!!).toString(2))
+            assertThat(konsumertUtkast).isNotNull()
+        }
     }
 
     @Test
