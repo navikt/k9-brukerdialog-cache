@@ -1,15 +1,21 @@
 package no.nav.cache.cache
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.cache.cache.CacheController.Endpoints.CACHE_PATH
 import no.nav.security.token.support.core.api.Protected
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus.*
-import org.springframework.web.bind.annotation.*
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NO_CONTENT
+import org.springframework.http.HttpStatus.OK
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseStatus
 
 @ProtectedRestController(issuer = "tokenx")
-@SecurityRequirement(name = "bearer-jwt", scopes = ["read", "write"])
 class CacheController(
     private val cacheService: CacheService
 ) {
