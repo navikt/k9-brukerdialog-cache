@@ -27,10 +27,12 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.skyscreamer.jsonassert.JSONAssert
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
@@ -108,6 +110,42 @@ internal class IntegrationTest {
     }
 
     @Test
+    fun `Mellomlagring av json med forskjellige zdt formater skal ikke feile`() {
+        val requestEntity = RequestEntity.post(CACHE_PATH)
+            .headers(hentToken().tokenTilHeader())
+            .header(HttpHeaders.CONTENT_TYPE, "application/json")
+            .body(
+                //language=JSON
+                """
+                {
+                  "ytelse": "PLEIEPENGER_SYKT_BARN",
+                  "nøkkelPrefiks": "mellomlagring_psb",
+                  "opprettet": "2024-08-06T10:23:15Z",
+                  "utløpsdato": "2024-08-09T10:23:15.644978Z",
+                  "endret": "2024-08-06T07:39:05.032Z",
+                  "verdi": "{\"key\": \"val\"}"
+                }
+            """.trimIndent()
+            )
+
+        val response = restTemplate.postAndAssert<String, String>(
+            request = requestEntity,
+            expectedStatus = HttpStatus.CREATED
+        )
+        JSONAssert.assertEquals(
+            //language=JSON
+            """
+            {
+              "nøkkel": "mellomlagring_psb_12345678910",
+              "verdi": "{\"key\": \"val\"}",
+              "utløpsdato": "2024-08-09T10:23:15.644978Z",
+              "opprettet": "2024-08-06T10:23:15Z",
+              "endret": "2024-08-06T07:39:05.032Z"
+            }
+        """.trimIndent(), response, true)
+    }
+
+    @Test
     fun `gitt cache lagres, forvent samme verdi ved henting`() {
         val postRequest = RequestEntity
             .post(CACHE_PATH)
@@ -139,7 +177,8 @@ internal class IntegrationTest {
             expectedBody = cacheResponseDTO
         )
 
-        val konsumertUtkast = utkastConsumer.hentMelding(Topics.K9_DITTNAV_VARSEL_UTKAST) { it == cacheInDB.utkastId }?.value()
+        val konsumertUtkast =
+            utkastConsumer.hentMelding(Topics.K9_DITTNAV_VARSEL_UTKAST) { it == cacheInDB.utkastId }?.value()
         logger.info("JSON UTKAST: {}", JSONObject(konsumertUtkast!!).toString(2))
         assertThat(konsumertUtkast).isNotNull()
     }
