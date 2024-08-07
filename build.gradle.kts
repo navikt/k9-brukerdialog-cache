@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -122,6 +123,10 @@ dependencyManagement {
 tasks {
     withType<Test> {
         useJUnitPlatform()
+        testLogging {
+            exceptionFormat = TestExceptionFormat.FULL
+            showStackTraces = true
+        }
         finalizedBy(jacocoTestReport) // report is always generated after tests run
     }
 

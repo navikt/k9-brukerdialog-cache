@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEqualTo
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import com.nimbusds.jwt.SignedJWT
 import no.nav.cache.K9BrukerdialogCacheApplication
 import no.nav.cache.cache.CacheController.Endpoints.CACHE_PATH
