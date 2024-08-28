@@ -15,6 +15,7 @@
       "cluster": "dev-gcp"
     }
   ],
+  "autoInstrumentation": "true",
   "externalHosts": [
     "login.microsoftonline.com"
   ],
