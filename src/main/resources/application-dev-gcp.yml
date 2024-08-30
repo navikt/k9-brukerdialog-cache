@@ -58,3 +58,7 @@ no.nav:
 
     ettersending-omp:
       link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending/omsorgspenger
+
+    opplaringspenger:
+      link: https://opplaringspenger-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/opplaringspenger
+      tittel: Søknad om opplæringspenger

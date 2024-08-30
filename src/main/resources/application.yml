@@ -58,6 +58,10 @@ no.nav:
       link: https://www.nav.no/familie/sykdom-i-familien/soknad/ettersending/omsorgspenger/melding
       tittel: Ettersendelse av dokumentasjon til omsorgspenger
 
+    opplaringspenger:
+      link: https://www.nav.no/familie/sykdom-i-familien/soknad/opplaringspenger
+      tittel: Søknad om opplæringspenger
+
 management:
   endpoints:
     web:

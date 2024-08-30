@@ -21,7 +21,8 @@ data class MineSiderProperties @ConstructorBinding constructor(
     val ettersending: UtkastProperties,
     val ettersendingPleiepengerSyktBarn: UtkastProperties,
     val ettersendingPleiepengerLivetsSlutt: UtkastProperties,
-    val ettersendingOmp: UtkastProperties
+    val ettersendingOmp: UtkastProperties,
+    val opplaringspenger: UtkastProperties
 ) {
     fun opprettUtkast(ident: String, ytelse: Ytelse): Utkast {
         val builder = Utkast.Builder()
@@ -77,6 +78,10 @@ data class MineSiderProperties @ConstructorBinding constructor(
             Ytelse.ETTERSENDING_OMP -> builder
                 .defaultTittel(ettersendingOmp.tittel)
                 .link(ettersendingOmp.link.toString())
+
+            Ytelse.OPPLÆRINGSPENGER -> builder
+                .defaultTittel(opplaringspenger.tittel)
+                .link(opplaringspenger.link.toString())
         }
 
         return builder.create()
