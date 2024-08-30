@@ -79,7 +79,7 @@ data class MineSiderProperties @ConstructorBinding constructor(
                 .defaultTittel(ettersendingOmp.tittel)
                 .link(ettersendingOmp.link.toString())
 
-            Ytelse.OPPLÆRINGSPENGER -> builder
+            Ytelse.OPPLARINGSPENGER -> builder
                 .defaultTittel(opplaringspenger.tittel)
                 .link(opplaringspenger.link.toString())
         }
