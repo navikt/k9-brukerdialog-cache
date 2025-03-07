@@ -22,6 +22,7 @@ data class MineSiderProperties @ConstructorBinding constructor(
     val ettersendingPleiepengerSyktBarn: UtkastProperties,
     val ettersendingPleiepengerLivetsSlutt: UtkastProperties,
     val ettersendingOmp: UtkastProperties,
+    val ettersendingOpplaringspenger: UtkastProperties,
     val opplaringspenger: UtkastProperties
 ) {
     fun opprettUtkast(ident: String, ytelse: Ytelse): Utkast {
@@ -78,6 +79,10 @@ data class MineSiderProperties @ConstructorBinding constructor(
             Ytelse.ETTERSENDING_OMP -> builder
                 .defaultTittel(ettersendingOmp.tittel)
                 .link(ettersendingOmp.link.toString())
+
+            Ytelse.ETTERSENDING_OPPLARINGSPENGER -> builder
+                .defaultTittel(ettersendingOpplaringspenger.tittel)
+                .link(ettersendingOpplaringspenger.link.toString())
 
             Ytelse.OPPLARINGSPENGER -> builder
                 .defaultTittel(opplaringspenger.tittel)
