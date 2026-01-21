@@ -25,7 +25,7 @@ configurations {
 }
 
 val logstashLogbackEncoderVersion by extra("7.4")
-val tokenSupportVersion by extra("4.1.4")
+val tokenSupportVersion by extra("6.0.0")
 val springCloudVersion by extra("2022.0.0-RC2")
 val retryVersion by extra("2.0.5")
 val postgresqlVersion by extra("42.7.2")
@@ -45,6 +45,14 @@ repositories {
     maven { url = uri("https://repo.spring.io/milestone") }
     maven {
         url = uri("https://jitpack.io")
+    }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: "k9-brukerdialog-cache"
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+        }
     }
 }
 
@@ -67,6 +75,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "mockito-core")
     }
+    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+    testImplementation("org.springframework.boot:spring-boot-resttestclient")
 
     // Swagger (openapi 3)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
@@ -97,6 +107,7 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
 
     // Jackson
+    implementation("org.springframework.boot:spring-boot-jackson2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Kotlin

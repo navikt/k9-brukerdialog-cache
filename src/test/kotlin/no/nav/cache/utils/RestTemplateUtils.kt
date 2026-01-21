@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.json.JSONObject
 import org.skyscreamer.jsonassert.JSONAssert
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.resttestclient.TestRestTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.RequestEntity
 
