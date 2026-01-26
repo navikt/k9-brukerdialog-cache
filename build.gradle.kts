@@ -26,7 +26,6 @@ configurations {
 
 val logstashLogbackEncoderVersion by extra("7.4")
 val tokenSupportVersion by extra("6.0.0")
-val springCloudVersion by extra("2022.0.0-RC2")
 val retryVersion by extra("2.0.5")
 val postgresqlVersion by extra("42.7.2")
 val awailitilityKotlinVersion by extra("4.2.1")
@@ -68,6 +67,7 @@ dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-aspects")
@@ -89,13 +89,12 @@ dependencies {
 
     // Database
     runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
-    implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
     testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 
     //Kafka
-    implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
     constraints {
         implementation("org.scala-lang:scala-library") {
             because("org.apache.kafka:kafka_2.13:3.3.2 -> https://www.cve.org/CVERecord?id=CVE-2022-36944")

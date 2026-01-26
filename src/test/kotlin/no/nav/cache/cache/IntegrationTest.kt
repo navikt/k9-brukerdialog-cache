@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -49,8 +50,8 @@ import java.time.ZonedDateTime
 
 
 @EmbeddedKafka( // Setter opp og tilgjengligjør embeded kafka broker
-    count = 3,
-    bootstrapServersProperty = "kafka-servers", // Setter bootstrap-servers for consumer og producer.
+    count = 1,
+    bootstrapServersProperty = "spring.kafka.bootstrap-servers", // Setter bootstrap-servers for consumer og producer.
     topics = [Topics.K9_DITTNAV_VARSEL_UTKAST]
 )
 @DirtiesContext
@@ -60,6 +61,7 @@ import java.time.ZonedDateTime
 )
 @ExtendWith(SpringExtension::class)
 @EnableMockOAuth2Server
+@AutoConfigureTestRestTemplate
 @ActiveProfiles("test")
 internal class IntegrationTest {
 
