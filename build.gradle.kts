@@ -26,18 +26,13 @@ configurations {
 
 val logstashLogbackEncoderVersion by extra("7.4")
 val tokenSupportVersion by extra("6.0.0")
-val retryVersion by extra("2.0.5")
-val postgresqlVersion by extra("42.7.2")
 val awailitilityKotlinVersion by extra("4.2.1")
 val assertkJvmVersion by extra("0.28.0")
 val springMockkVersion by extra("4.0.2")
 val mockkVersion by extra("1.13.10")
-val okHttp3Version by extra("4.12.0")
 val orgJsonVersion by extra("20240303")
 val springdocVersion by extra("2.5.0")
-val testcontainersVersion by extra("1.19.7")
 
-ext["testcontainersVersion"] = testcontainersVersion
 
 repositories {
     mavenCentral()
@@ -56,11 +51,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.yaml:snakeyaml:2.5") {
-        because("https://github.com/navikt/k9-brukerdialog-cache/security/dependabot/1")
-    }
-
-
+    implementation("org.yaml:snakeyaml")
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
     testImplementation("no.nav.security:token-validation-spring-test:$tokenSupportVersion")
 
@@ -88,10 +79,10 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
 
     // Database
-    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+    runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-database-postgresql")
-    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
 
     //Kafka
     implementation("org.springframework.boot:spring-boot-starter-kafka")
@@ -125,12 +116,6 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}")
-    }
-}
-
 tasks {
     withType<Test> {
         useJUnitPlatform()
@@ -161,7 +146,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "8.5"
+        gradleVersion = "9.3.0"
     }
 }
 
