@@ -3,12 +3,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.spring") version "2.2.20"
-    kotlin("plugin.jpa") version "2.2.20"
-    id("org.springframework.boot") version "3.5.6"
+    kotlin("jvm") version "2.2.10"
+    kotlin("plugin.spring") version "2.2.10"
+    kotlin("plugin.jpa") version "2.2.10"
+    id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.sonarqube") version "7.0.0.6105"
+    id("org.sonarqube") version "7.2.2.6593"
     jacoco
 }
 
@@ -25,20 +25,14 @@ configurations {
 }
 
 val logstashLogbackEncoderVersion by extra("7.4")
-val tokenSupportVersion by extra("4.1.4")
-val springCloudVersion by extra("2022.0.0-RC2")
-val retryVersion by extra("2.0.5")
-val postgresqlVersion by extra("42.7.2")
+val tokenSupportVersion by extra("6.0.0")
 val awailitilityKotlinVersion by extra("4.2.1")
 val assertkJvmVersion by extra("0.28.0")
 val springMockkVersion by extra("4.0.2")
 val mockkVersion by extra("1.13.10")
-val okHttp3Version by extra("4.12.0")
 val orgJsonVersion by extra("20240303")
 val springdocVersion by extra("2.5.0")
-val testcontainersVersion by extra("1.19.7")
 
-ext["testcontainersVersion"] = testcontainersVersion
 
 repositories {
     mavenCentral()
@@ -46,20 +40,25 @@ repositories {
     maven {
         url = uri("https://jitpack.io")
     }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: "k9-brukerdialog-cache"
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 dependencies {
-    implementation("org.yaml:snakeyaml:2.5") {
-        because("https://github.com/navikt/k9-brukerdialog-cache/security/dependabot/1")
-    }
-
-
+    implementation("org.yaml:snakeyaml")
     implementation("no.nav.security:token-validation-spring:$tokenSupportVersion")
     testImplementation("no.nav.security:token-validation-spring-test:$tokenSupportVersion")
 
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-aspects")
@@ -67,6 +66,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "mockito-core")
     }
+    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+    testImplementation("org.springframework.boot:spring-boot-resttestclient")
 
     // Swagger (openapi 3)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
@@ -78,14 +79,13 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
 
     // Database
-    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
-    implementation("org.flywaydb:flyway-core")
+    runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-database-postgresql")
-    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
 
     //Kafka
-    implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
     constraints {
         implementation("org.scala-lang:scala-library") {
             because("org.apache.kafka:kafka_2.13:3.3.2 -> https://www.cve.org/CVERecord?id=CVE-2022-36944")
@@ -97,6 +97,7 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
 
     // Jackson
+    implementation("org.springframework.boot:spring-boot-jackson2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Kotlin
@@ -113,12 +114,6 @@ dependencies {
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertkJvmVersion")
     testImplementation("com.ninja-squad:springmockk:$springMockkVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}")
-    }
 }
 
 tasks {
@@ -151,7 +146,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "8.5"
+        gradleVersion = "9.3.0"
     }
 }
 

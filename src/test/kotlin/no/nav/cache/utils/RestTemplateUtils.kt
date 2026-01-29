@@ -4,13 +4,13 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.json.JSONObject
 import org.skyscreamer.jsonassert.JSONAssert
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.resttestclient.TestRestTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.RequestEntity
 
 object RestTemplateUtils {
 
-    inline fun <reified RequestBody, reified ResponseBody> TestRestTemplate.postAndAssert(
+    inline fun <reified RequestBody : Any, reified ResponseBody : Any> TestRestTemplate.postAndAssert(
         request: RequestEntity<RequestBody>,
         expectedStatus: HttpStatus
     ): ResponseBody {
@@ -23,11 +23,11 @@ object RestTemplateUtils {
         request: RequestEntity<Void>,
         expectedStatus: HttpStatus
     ) {
-        val response = exchange(request, Unit::class.java)
+        val response = exchange(request, Any::class.java)
         assertThat(response.statusCode).isEqualTo(expectedStatus)
     }
 
-    inline fun <reified ResponseBody> TestRestTemplate.getAndAssert(
+    inline fun <reified ResponseBody : Any> TestRestTemplate.getAndAssert(
         request: RequestEntity<Void>,
         expectedStatus: HttpStatus,
         expectedBody: ResponseBody?
@@ -39,7 +39,7 @@ object RestTemplateUtils {
         return body
     }
 
-    inline fun <reified RequestBody, reified ResponseBody : Any> TestRestTemplate.putAndAssert(
+    inline fun <reified RequestBody : Any, reified ResponseBody : Any> TestRestTemplate.putAndAssert(
         request: RequestEntity<RequestBody>,
         expectedStatus: HttpStatus,
         expectedBody: ResponseBody?

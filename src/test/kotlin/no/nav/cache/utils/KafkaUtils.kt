@@ -25,13 +25,13 @@ fun <T> Producer<String, Any>.leggPåTopic(data: T, topic: String, mapper: Objec
 
 fun <T> T.somJson(mapper: ObjectMapper) = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
 
-fun <K, V> EmbeddedKafkaBroker.opprettKafkaConsumer(groupId: String, topicName: String): Consumer<K, V> {
+fun <K : Any, V : Any> EmbeddedKafkaBroker.opprettKafkaConsumer(groupId: String, topicName: String): Consumer<K, V> {
 
     val consumerProps = KafkaTestUtils.consumerProps(groupId, "true", this)
     consumerProps[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = "org.apache.kafka.common.serialization.StringDeserializer"
     consumerProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = "org.apache.kafka.common.serialization.StringDeserializer"
 
-    val consumer = DefaultKafkaConsumerFactory<K, V>(HashMap(consumerProps)).createConsumer()
+    val consumer = DefaultKafkaConsumerFactory<K, V>(consumerProps as Map<String, Any>).createConsumer()
     consumer.subscribe(listOf(topicName))
     return consumer
 }
