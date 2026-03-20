@@ -1,6 +1,7 @@
 package no.nav.cache.cache
 
 enum class Ytelse {
+    AKTIVITETSPENGER,
     OMSORGSPENGER_UTVIDET_RETT,
     OMSORGSPENGER_MIDLERTIDIG_ALENE,
     ETTERSENDING,

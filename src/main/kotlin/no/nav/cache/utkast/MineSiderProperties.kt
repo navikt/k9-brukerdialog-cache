@@ -14,6 +14,7 @@ data class MineSiderProperties @ConstructorBinding constructor(
     val psbEndringsmelding: UtkastProperties,
     val pleiepengerLivetsSlutt: UtkastProperties,
     val omsorgspengerUtvidetRett: UtkastProperties,
+    val aktivitetspenger: UtkastProperties,
     val omsorgspengerMidlertidigAlene: UtkastProperties,
     val omsorgspengerUtbetalingArbeidstaker: UtkastProperties,
     val omsorgsdagerAleneomsorg: UtkastProperties,
@@ -47,6 +48,10 @@ data class MineSiderProperties @ConstructorBinding constructor(
             Ytelse.OMSORGSPENGER_UTVIDET_RETT -> builder
                 .defaultTittel(omsorgspengerUtvidetRett.tittel)
                 .link(omsorgspengerUtvidetRett.link.toString())
+
+            Ytelse.AKTIVITETSPENGER -> builder
+                .defaultTittel(aktivitetspenger.tittel)
+                .link(aktivitetspenger.link.toString())
 
             Ytelse.OMSORGSPENGER_MIDLERTIDIG_ALENE -> builder
                 .defaultTittel(omsorgspengerMidlertidigAlene.tittel)
