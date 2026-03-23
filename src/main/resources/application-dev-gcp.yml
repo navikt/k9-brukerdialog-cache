@@ -61,7 +61,9 @@ no.nav:
 
     opplaringspenger:
       link: https://opplaringspenger-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/opplaringspenger
-      tittel: Søknad om opplæringspenger
+
+    aktivitetspenger:
+      link: TODO
 
     ettersending-opp:
       link: https://k9-ettersending-soknad.intern.dev.nav.no/familie/sykdom-i-familien/soknad/ettersending/opplaringspenger
