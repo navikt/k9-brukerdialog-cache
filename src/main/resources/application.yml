@@ -63,7 +63,7 @@ no.nav:
       tittel: Søknad om opplæringspenger
 
     aktivitetspenger:
-      link: TODO
+      link: https://www.nav.no/aktivitetspenger/soknad # TODO må oppdateres ved lansering av aktivitetspenger
       tittel: Søknad om aktivitetspenger
 
     ettersending-opplaringspenger:
