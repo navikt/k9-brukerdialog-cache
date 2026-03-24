@@ -88,7 +88,11 @@ class CacheService(
             .filterNot { it.utkastId == null }
             .filterNot { it.ytelse == null }
             .forEach { cacheEntryDAO ->
-                utkastService.slettUtkast(cacheEntryDAO.ytelse!!, cacheEntryDAO.utkastId!!)
+                val ytelse = cacheEntryDAO.ytelse
+                val utkastId = cacheEntryDAO.utkastId
+                if (ytelse != null && utkastId != null) {
+                    utkastService.slettUtkast(ytelse, utkastId)
+                }
             }
 
         val antallSlettedeCache = repo.deleteAllByUtløpsdatoIsBefore(now)
