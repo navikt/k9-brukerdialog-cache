@@ -71,8 +71,10 @@ class CacheService(
         repo.deleteById(cacheEntryDAO.nøkkel)
         if (repo.existsById(cacheEntryDAO.nøkkel)) throw FailedCacheDeletionException(nøkkelPrefiks)
 
-        if (cacheEntryDAO.utkastId != null && cacheEntryDAO.ytelse != null) {
-            utkastService.slettUtkast(cacheEntryDAO.ytelse, cacheEntryDAO.utkastId)
+        val ytelse = cacheEntryDAO.ytelse
+        val utkastId = cacheEntryDAO.utkastId
+        if (utkastId != null && ytelse != null) {
+            utkastService.slettUtkast(ytelse, utkastId)
         }
     }
 
