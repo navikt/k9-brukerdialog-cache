@@ -1,4 +1,4 @@
-FROM ghcr.io/navikt/sif-baseimages/java-chainguard-25:2026.11.13.0858Z
+FROM ghcr.io/navikt/sif-baseimages/java-chainguard-25:2026.11.17.0754Z
 
 COPY build/libs/*.jar app.jar
 
